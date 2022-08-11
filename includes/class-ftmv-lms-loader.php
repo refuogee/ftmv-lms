@@ -3,11 +3,11 @@
 /**
  * Register all actions, filters and shortcodes for the plugin
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  */
 
 /**
@@ -17,11 +17,11 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  * @author     FTMV
  */
-class ftmv_tp_Loader  {
+class ftmv_lms_Loader  {
 
 	/**
 	 * The array of actions registered with WordPress.

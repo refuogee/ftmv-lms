@@ -3,11 +3,11 @@
 /**
  * The admin-specific functionality of the plugin.
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/admin
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/admin
  */
 
 /**
@@ -16,11 +16,11 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/admin
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/admin
  * @author     FTMV
  */
-class ftmv_tp_Admin {
+class ftmv_lms_Admin {
 
 	/**
 	 * The ID of this plugin.
@@ -110,20 +110,20 @@ class ftmv_tp_Admin {
 
         add_menu_page(
             'FTMV LMS',
-            __( 'FTMV LMS', 'ftmv-tp' ),            
+            __( 'FTMV LMS', 'ftmv-lms' ),            
             'manage_options',
-            'ftmv-tp',
+            'ftmv-lms',
             array( $this, 'display_top_level_courses'),
             'dashicons-forms',3
         );
 
-        /* if ( isset( get_option('ftmv-tp-settings')['institution-name'] ) ) {
+        /* if ( isset( get_option('ftmv-lms-settings')['institution-name'] ) ) {
             
             add_menu_page(
-                get_option('ftmv-tp-settings')['institution-name'] . ' Admin',
-                __( get_option('ftmv-tp-settings')['institution-name'] . ' Admin', 'ftmv-tp' ),            
+                get_option('ftmv-lms-settings')['institution-name'] . ' Admin',
+                __( get_option('ftmv-lms-settings')['institution-name'] . ' Admin', 'ftmv-lms' ),            
                 'manage_options',
-                'ftmv-tp',
+                'ftmv-lms',
                 array( $this, 'display_general_settings_page'),
                 'dashicons-forms',3
             );   
@@ -131,39 +131,39 @@ class ftmv_tp_Admin {
         } else {
             add_menu_page(
                 'FTMV Test Plugin',
-                __( 'Learner Management Plugin', 'ftmv-tp' ),            
+                __( 'Learner Management Plugin', 'ftmv-lms' ),            
                 'manage_options',
-                'ftmv-tp',
+                'ftmv-lms',
                 array( $this, 'display_general_settings_page'),
                 'dashicons-forms',3
             );
         } */
 
         add_submenu_page(
-			'ftmv-tp',
-			__( 'Top Level Courses', 'ftmv-tp' ),
-			__( 'Top Level Courses', 'ftmv-tp' ),
+			'ftmv-lms',
+			__( 'Top Level Courses', 'ftmv-lms' ),
+			__( 'Top Level Courses', 'ftmv-lms' ),
 			'manage_options',
-			'ftmv-tp-general',
+			'ftmv-lms-general',
 			array( $this, 'display_top_level_courses' )
 		);
 
         add_submenu_page(
-			'ftmv-tp',
-			__( 'Add A Top Level Course', 'ftmv-tp' ),
-			__( 'Add A Top Level Course', 'ftmv-tp' ),
+			'ftmv-lms',
+			__( 'Add A Top Level Course', 'ftmv-lms' ),
+			__( 'Add A Top Level Course', 'ftmv-lms' ),
 			'manage_options',
-			'ftmv-tp-add-course',
+			'ftmv-lms-add-course',
 			array( $this, 'display_add_level_courses' )
 		);
 
 		// Create our settings page as a submenu page.
 		/* add_submenu_page(
 			'tools.php',
-			__( 'FTMV Test Plugin', 'ftmv-tp' ),
-			__( 'FTMV Test Plugin', 'ftmv-tp' ),
+			__( 'FTMV Test Plugin', 'ftmv-lms' ),
+			__( 'FTMV Test Plugin', 'ftmv-lms' ),
 			'manage_options',
-			'ftmv-tp',
+			'ftmv-lms',
 			array( $this, 'display_settings_page' )
 		); */
 
@@ -173,17 +173,17 @@ class ftmv_tp_Admin {
         global $plugin_page;
 
         $hidden_submenus = array(
-            'ftmv-tp-add-course' => true,
+            'ftmv-lms-add-course' => true,
         );
 
         // Select another submenu item to highlight (optional).
         if ( $plugin_page && isset( $hidden_submenus[ $plugin_page ] ) ) {
-            $submenu_file = 'ftmv-tp-general';
+            $submenu_file = 'ftmv-lms-general';
         }
 
         // Hide the submenu.
         foreach ( $hidden_submenus as $submenu => $unused ) {
-            remove_submenu_page( 'ftmv-tp', $submenu );
+            remove_submenu_page( 'ftmv-lms', $submenu );
         }
 
         return $submenu_file;
@@ -197,25 +197,25 @@ class ftmv_tp_Admin {
 
     public function display_add_level_courses() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-tp-add-top-level-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-top-level-courses.php';
 
 	}
 
     public function display_top_level_courses() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-tp-top-level-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-top-level-courses.php';
 
 	}
 
     public function display_general_settings_page() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-tp-admin-display.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-admin-display.php';
 
 	}
 
 	public function display_settings_page() {
 
-		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-tp-admin-display.php';
+		//require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-admin-display.php';
 
 	}
 
@@ -237,7 +237,7 @@ class ftmv_tp_Admin {
         //echo '<div><p>Test</p></div>';
 		add_settings_section(
 			$this->plugin_name . '-settings-section',
-			__( get_option('ftmv-tp-settings')['institution-name'] . ' Settings', 'ftmv-tp' ),
+			__( get_option('ftmv-lms-settings')['institution-name'] . ' Settings', 'ftmv-lms' ),
 			array( $this, 'sandbox_add_settings_section' ),
 			$this->plugin_name . '-settings'
 		);
@@ -245,13 +245,13 @@ class ftmv_tp_Admin {
 		// Here we are going to add fields to our section.
 		/* add_settings_field(
 			'post-types',
-			__( 'Post Types', 'ftmv-tp' ),
+			__( 'Post Types', 'ftmv-lms' ),
 			array( $this, 'sandbox_add_settings_field_multiple_checkbox' ),
 			$this->plugin_name . '-settings',
 			$this->plugin_name . '-settings-section',
 			array(
 				'label_for' => 'post-types',
-				'description' => __( 'Save button will be added only to the checked post types.', 'ftmv-tp' )
+				'description' => __( 'Save button will be added only to the checked post types.', 'ftmv-lms' )
 			)
 		); */
 		/* add_settings_field(
@@ -323,27 +323,27 @@ class ftmv_tp_Admin {
         
         /* add_settings_field(
             'institution-name',
-            __( 'Institution Name:', 'ftmv-tp' ),
+            __( 'Institution Name:', 'ftmv-lms' ),
             array( $this, 'sandbox_add_settings_field_input_text' ),
             $this->plugin_name . '-settings',
             $this->plugin_name . '-settings-section',
             array(
                 'label_for' => 'institution-name',
-                'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-tp')
+                'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-lms')
             )
         ); */
 
-        /* if ( isset( get_option('ftmv-tp-settings')['institution-name'] ) ) {
+        /* if ( isset( get_option('ftmv-lms-settings')['institution-name'] ) ) {
 
             add_settings_field(
                 'course-name',
-                __( 'Name of the course you:', 'ftmv-tp' ),
+                __( 'Name of the course you:', 'ftmv-lms' ),
                 array( $this, 'sandbox_add_settings_field_input_text' ),
                 $this->plugin_name . '-settings',
                 $this->plugin_name . '-settings-section',
                 array(
                     'label_for' => 'course-name',
-                    'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-tp' )
+                    'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-lms' )
                 )
             );
         } */
@@ -540,7 +540,7 @@ class ftmv_tp_Admin {
                 //error_log('TIME = ' . $today . ' We are going to save course name = ' . $new_top_level_course . ' and user Id = ' . $user_id . 'to the database');
                 
                 global $wpdb;
-                $table = $wpdb->prefix.'ftmv_main_course_table';
+                $table = $wpdb->prefix.'ftmv_lms_main_course_table';
                 
                 $data = array('name' => $new_top_level_course, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
                 
@@ -548,7 +548,7 @@ class ftmv_tp_Admin {
                 
                 $wpdb->insert($table,$data,$format);
 
-                wp_redirect( admin_url("/admin.php?page=ftmv-tp-general") );
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-general") );
                  
 
             } else {

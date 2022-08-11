@@ -3,11 +3,11 @@
 /**
  * Fired during plugin deactivation
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    Toptal_Save
- * @subpackage Toptal_Save/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  * @author     FTMV
  */
-class ftmv_tp_Deactivator {
+class ftmv_lms_Deactivator {
 
 	/**
 	 * On deactivation delete the "Saved" page.

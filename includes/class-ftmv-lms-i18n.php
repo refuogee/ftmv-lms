@@ -6,11 +6,11 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    Toptal_Save
- * @subpackage Toptal_Save/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  */
 
 /**
@@ -19,12 +19,12 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @since      1.0.0
- * @package    Toptal_Save
- * @subpackage Toptal_Save/includes
- * @author     Ratko Solaja <ratko@toptal.com>
+ * @since      1.0.0*
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
+ * @author     FTMV
  */
-class Toptal_Save_i18n {
+class ftmv_lms_i18n {
 
 
 	/**

@@ -3,11 +3,11 @@
 /**
  * Fired during plugin activation
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  */
 
 /**
@@ -16,11 +16,11 @@
  * This class defines all code necessary to run during the plugin's activation.
  *
  * @since      1.0.0
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  * @author     FTMV
  */
-class ftmv_tp_Activator {
+class ftmv_lms_Activator {
 
 	/**
 	 * On activation create a page and remember it.
@@ -34,8 +34,8 @@ class ftmv_tp_Activator {
         
         global $wpdb;
         
-        $first_table_name = $wpdb->prefix . 'ftmv_main_course_table';
-        $second_table_name = $wpdb->prefix . 'ftmv_sub_course_table';
+        $first_table_name = $wpdb->prefix . 'ftmv_lms_main_course_table';
+        $second_table_name = $wpdb->prefix . 'ftmv_lms_sub_course_table';
 
         $charset_collate = $wpdb->get_charset_collate();
 

@@ -5,11 +5,11 @@
  *
  * This file is used to markup the admin-facing aspects of the plugin.
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       https://www.ftmv.digital
  * @since      1.0.0
  *
- * @package    Toptal_Save
- * @subpackage Toptal_Save/admin/partials
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/admin/partials
  */
 
 
@@ -22,8 +22,8 @@
         <div class="wrap-test">        
         
             <?php
-                settings_fields( 'ftmv-tp-settings' );
-                do_settings_sections( 'ftmv-tp-settings' );
+                settings_fields( 'ftmv-lms-settings' );
+                do_settings_sections( 'ftmv-lms-settings' );
                 submit_button();
             ?>
         </div>

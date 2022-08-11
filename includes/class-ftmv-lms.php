@@ -9,8 +9,8 @@
  * @link       ftmv
  * @since      1.0.0
  *
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  */
 
 /**
@@ -23,11 +23,11 @@
  * version of the plugin.
  *
  * @since      1.0.0
- * @package    ftmv_tp
- * @subpackage ftmv_tp/includes
+ * @package    ftmv_lms
+ * @subpackage ftmv_lms/includes
  * @author     FTMV
  */
-class ftmv_tp {
+class ftmv_lms {
 
 	/**
 	 * The loader that's responsible for maintaining and registering all hooks that power
@@ -35,7 +35,7 @@ class ftmv_tp {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      ftmv_tp_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      ftmv_lms_Loader    $loader    Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -68,7 +68,7 @@ class ftmv_tp {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'ftmv-tp';
+		$this->plugin_name = 'ftmv-lms';
 		$this->version = '1.0.0';
 
 		$this->load_dependencies();
@@ -100,7 +100,7 @@ class ftmv_tp {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ftmv-tp-loader.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-ftmv-lms-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
@@ -111,7 +111,7 @@ class ftmv_tp {
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ftmv-tp-admin.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ftmv-lms-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -119,7 +119,7 @@ class ftmv_tp {
 		 */
 		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-toptal-save-public.php';
 
-		$this->loader = new ftmv_tp_Loader();
+		$this->loader = new ftmv_lms_Loader();
 
 	}
 
@@ -149,7 +149,7 @@ class ftmv_tp {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new ftmv_tp_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new ftmv_lms_Admin( $this->get_plugin_name(), $this->get_version() );
 
 		// Hook our settings page
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_settings_page' );
@@ -219,7 +219,7 @@ class ftmv_tp {
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
 	 * @since     1.0.0
-	 * @return    ftmv_tp_Loader    Orchestrates the hooks of the plugin.
+	 * @return    ftmv_lms_Loader    Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
 		return $this->loader;
