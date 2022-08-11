@@ -1,4 +1,4 @@
-=== FTMV LMS ===
+**FTMV LMS**
 Contributors: refuogee
 Tags: learner management system.
 Requires at least: 3.0
@@ -13,7 +13,7 @@ Create courses and the facilitators and learners associated with these courses s
 
 Created for a client's specific needs but trying to generalise in the interests of possibly creating a useful plugin.
 
-**FTMV LMS ** will give users the ability to create top level courses and then instances of when those courses run - eg. History 101 (top level) and then it running from say 1 March - 30 June (An instance). 
+**FTMV LMS** will give users the ability to create top level courses and then instances of when those courses run - eg. History 101 (top level) and then it running from say 1 March - 30 June (An instance). 
 
 From the creation of this top level course a user type of facilitator and student associated with the course are created. Admin still has to create a facilitator associated with a specific course. The facilitator has the capabilities and permissions to create instances of the top level course and create new students for an instance of the course.
 
