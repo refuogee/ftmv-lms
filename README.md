@@ -10,7 +10,7 @@ Created for a client's specific needs but trying to generalise in the interests 
 
 From the creation of this top level course a user type of facilitator and student associated with the course are created. Admin still has to create a facilitator associated with a specific course. The facilitator has the capabilities and permissions to create instances of the top level course and create new students for an instance of the course.
 
-Studends of the associated course are created with the capabilities to view the associated course material.
+Students of the associated course are created with the capabilities to view the associated course material.
 
 **Features:**
 
