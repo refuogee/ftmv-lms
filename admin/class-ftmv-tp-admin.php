@@ -108,7 +108,16 @@ class ftmv_tp_Admin {
 
     public function register_settings_page() {
 
-        if ( isset( get_option('ftmv-tp-settings')['institution-name'] ) ) {
+        add_menu_page(
+            'FTMV LMS',
+            __( 'FTMV LMS', 'ftmv-tp' ),            
+            'manage_options',
+            'ftmv-tp',
+            array( $this, 'display_top_level_courses'),
+            'dashicons-forms',3
+        );
+
+        /* if ( isset( get_option('ftmv-tp-settings')['institution-name'] ) ) {
             
             add_menu_page(
                 get_option('ftmv-tp-settings')['institution-name'] . ' Admin',
@@ -128,7 +137,7 @@ class ftmv_tp_Admin {
                 array( $this, 'display_general_settings_page'),
                 'dashicons-forms',3
             );
-        }
+        } */
 
         add_submenu_page(
 			'ftmv-tp',
@@ -312,7 +321,7 @@ class ftmv_tp_Admin {
 			)
 		); */
         
-        add_settings_field(
+        /* add_settings_field(
             'institution-name',
             __( 'Institution Name:', 'ftmv-tp' ),
             array( $this, 'sandbox_add_settings_field_input_text' ),
@@ -322,7 +331,7 @@ class ftmv_tp_Admin {
                 'label_for' => 'institution-name',
                 'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-tp')
             )
-        );
+        ); */
 
         /* if ( isset( get_option('ftmv-tp-settings')['institution-name'] ) ) {
 
