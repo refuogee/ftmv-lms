@@ -1,11 +1,4 @@
 *FTMV LMS*
-Contributors: refuogee
-Tags: learner management system.
-Requires at least: 3.0
-Tested up to: 4.7
-Stable tag: 1.0.0
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Create courses and the facilitators and learners associated with these courses so they can interact with plugin functionality and course material based on their permissions and capabilities.
 
