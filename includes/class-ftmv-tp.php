@@ -117,7 +117,7 @@ class ftmv_tp {
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-toptal-save-public.php';
+		// require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-toptal-save-public.php';
 
 		$this->loader = new ftmv_tp_Loader();
 
@@ -177,7 +177,7 @@ class ftmv_tp {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new Toptal_Save_Public( $this->get_plugin_name(), $this->get_version() );
+		// $plugin_public = new Toptal_Save_Public( $this->get_plugin_name(), $this->get_version() );
 
 		// Append our button
 		$this->loader->add_action( 'the_content', $plugin_public, 'append_the_button', 45 );
