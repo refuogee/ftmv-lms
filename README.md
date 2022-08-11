@@ -1,4 +1,4 @@
-*FTMV LMS*
+***FTMV LMS***
 Contributors: refuogee
 Tags: learner management system.
 Requires at least: 3.0
