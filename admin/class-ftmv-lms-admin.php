@@ -110,10 +110,10 @@ class ftmv_lms_Admin {
 
         add_menu_page(
             'FTMV LMS',
-            __( 'FTMV LMS', 'ftmv-lms' ),            
+            __( 'FTMV LMS', 'ftmv-lms-overview' ),            
             'manage_options',
-            'ftmv-lms',
-            array( $this, 'display_top_level_courses'),
+            'ftmv-lms-overview',
+            array( $this, 'display_admin_overview_screen'),
             'dashicons-forms',3
         );
 
@@ -140,32 +140,49 @@ class ftmv_lms_Admin {
         } */
 
         add_submenu_page(
-			'ftmv-lms',
-			__( 'Top Level Courses', 'ftmv-lms' ),
-			__( 'Top Level Courses', 'ftmv-lms' ),
+			'ftmv-lms-overview',
+			__( 'Overview', 'ftmv-lms-overview' ),
+			__( 'Overview', 'ftmv-lms-overview' ),
 			'manage_options',
-			'ftmv-lms-general',
-			array( $this, 'display_top_level_courses' )
+			'ftmv-lms-overview',
+			array( $this, 'display_admin_overview_screen' )
 		);
 
         add_submenu_page(
-			'ftmv-lms',
-			__( 'Add A Top Level Course', 'ftmv-lms' ),
-			__( 'Add A Top Level Course', 'ftmv-lms' ),
+			'ftmv-lms-overview',
+			__( 'Programmes', 'ftmv-lms-programmes' ),
+			__( 'Programmes', 'ftmv-lms-programmes' ),
 			'manage_options',
-			'ftmv-lms-add-course',
-			array( $this, 'display_add_level_courses' )
+			'ftmv-lms-programmes',
+			array( $this, 'display_programmes' )
 		);
 
-		// Create our settings page as a submenu page.
-		/* add_submenu_page(
-			'tools.php',
-			__( 'FTMV Test Plugin', 'ftmv-lms' ),
-			__( 'FTMV Test Plugin', 'ftmv-lms' ),
+        add_submenu_page(
+			'ftmv-lms-overview',
+			__( 'Add a Programme', 'ftmv-lms-add-programme' ),
+			__( 'Add a Programme', 'ftmv-lms-add-programme' ),
 			'manage_options',
-			'ftmv-lms',
-			array( $this, 'display_settings_page' )
-		); */
+			'ftmv-lms-add-programme',
+			array( $this, 'display_add_programme' )
+		);
+        
+        add_submenu_page(
+			'ftmv-lms-overview',
+			__( 'Programme Details', 'ftmv-lms-programme-overview' ),
+			__( 'Programme Details', 'ftmv-lms-programme-overview' ),
+			'manage_options',
+			'ftmv-lms-programme-overview',
+			array( $this, 'display_programme_overview' )
+		);
+
+        add_submenu_page(
+			'ftmv-lms-overview',
+			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
+			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
+			'manage_options',
+			'ftmv-lms-add-course',
+			array( $this, 'display_add_course' )
+		);
 
 	}
 
@@ -178,7 +195,7 @@ class ftmv_lms_Admin {
 
         // Select another submenu item to highlight (optional).
         if ( $plugin_page && isset( $hidden_submenus[ $plugin_page ] ) ) {
-            $submenu_file = 'ftmv-lms-general';
+            $submenu_file = 'ftmv-lms';
         }
 
         // Hide the submenu.
@@ -195,15 +212,33 @@ class ftmv_lms_Admin {
 	 * @since    1.0.0
 	 */
 
-    public function display_add_level_courses() {
+    public function display_add_course() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-top-level-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-course.php';
+
+	}
+    
+    public function display_programme_overview() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-programme-overview.php';
 
 	}
 
-    public function display_top_level_courses() {
+    public function display_add_programme() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-top-level-courses.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-programme.php';
+
+	}    
+
+    public function display_admin_overview_screen() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-admin-overview.php';
+
+	}    
+
+    public function display_programmes() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-programmes.php';
 
 	}
 
@@ -241,113 +276,6 @@ class ftmv_lms_Admin {
 			array( $this, 'sandbox_add_settings_section' ),
 			$this->plugin_name . '-settings'
 		);
-
-		// Here we are going to add fields to our section.
-		/* add_settings_field(
-			'post-types',
-			__( 'Post Types', 'ftmv-lms' ),
-			array( $this, 'sandbox_add_settings_field_multiple_checkbox' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'post-types',
-				'description' => __( 'Save button will be added only to the checked post types.', 'ftmv-lms' )
-			)
-		); */
-		/* add_settings_field(
-			'toggle-content-override',
-			__( 'Append Button', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_single_checkbox' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'toggle-content-override',
-				'description' => __( 'If checked, it will append save button to the content.', 'toptal-save' )
-			)
-		); */
-		/* add_settings_field(
-			'toggle-status-override',
-			__( 'Membership', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_single_checkbox' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'toggle-status-override',
-				'description' => __( 'If checked, this feature will be available only to logged in users. ', 'toptal-save' )
-			)
-		); */
-		/* add_settings_field(
-			'toggle-css-override',
-			__( 'Our Styles', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_single_checkbox' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'toggle-css-override',
-				'description' => __( 'If checked, our style will be used.', 'toptal-save' )
-			)
-		); */
-		/* add_settings_field(
-			'text-save',
-			__( 'Save Item', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_input_text' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'text-save',
-				'default'   => __( 'Save Item', 'toptal-save' )
-			)
-		);
-		add_settings_field(
-			'text-unsave',
-			__( 'Unsave Item', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_input_text' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'text-unsave',
-				'default'   => __( 'Unsave Item', 'toptal-save' )
-			)
-		);
-		add_settings_field(
-			'text-saved',
-			__( 'Saved. See saved items.', 'toptal-save' ),
-			array( $this, 'sandbox_add_settings_field_input_text' ),
-			$this->plugin_name . '-settings',
-			$this->plugin_name . '-settings-section',
-			array(
-				'label_for' => 'text-saved',
-				'default'   => __( 'Saved. See saved items.', 'toptal-save' )
-			)
-		); */
-        
-        /* add_settings_field(
-            'institution-name',
-            __( 'Institution Name:', 'ftmv-lms' ),
-            array( $this, 'sandbox_add_settings_field_input_text' ),
-            $this->plugin_name . '-settings',
-            $this->plugin_name . '-settings-section',
-            array(
-                'label_for' => 'institution-name',
-                'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-lms')
-            )
-        ); */
-
-        /* if ( isset( get_option('ftmv-lms-settings')['institution-name'] ) ) {
-
-            add_settings_field(
-                'course-name',
-                __( 'Name of the course you:', 'ftmv-lms' ),
-                array( $this, 'sandbox_add_settings_field_input_text' ),
-                $this->plugin_name . '-settings',
-                $this->plugin_name . '-settings-section',
-                array(
-                    'label_for' => 'course-name',
-                    'default'   => __( 'The name of the institution making use of this plugin', 'ftmv-lms' )
-                )
-            );
-        } */
-
 	}
 
 	/**
@@ -385,170 +313,77 @@ class ftmv_lms_Admin {
 
 	}
 
-	/**
-	 * Sandbox our single checkboxes.
-	 *
-	 * @since    1.0.0
-	 */
-	/* public function sandbox_add_settings_field_single_checkbox( $args ) {
-
-		$field_id = $args['label_for'];
-		$field_description = $args['description'];
-
-		$options = get_option( $this->plugin_name . '-settings' );
-		$option = 0;
-
-		if ( ! empty( $options[ $field_id ] ) ) {
-
-			$option = $options[ $field_id ];
-
-		}
-
-		?>
-
-			<label for="<?php echo $this->plugin_name . '-settings[' . $field_id . ']'; ?>">
-				<input type="checkbox" name="<?php echo $this->plugin_name . '-settings[' . $field_id . ']'; ?>" id="<?php echo $this->plugin_name . '-settings[' . $field_id . ']'; ?>" <?php checked( $option, true, 1 ); ?> value="1" />
-				<span class="description"><?php echo esc_html( $field_description ); ?></span>
-			</label>
-
-		<?php
-
-	} */
-
-	/**
-	 * Sandbox our multiple checkboxes
-	 *
-	 * @since    1.0.0
-	 */
-	/* public function sandbox_add_settings_field_multiple_checkbox( $args ) {
-
-		$field_id = $args['label_for'];
-		$field_description = $args['description'];
-
-		$options = get_option( $this->plugin_name . '-settings' );
-		$option = array();
-
-		if ( ! empty( $options[ $field_id ] ) ) {
-			$option = $options[ $field_id ];
-		}
-
-		if ( $field_id == 'post-types' ) {
-
-			$args = array(
-				'public' => true
-			);
-			$post_types = get_post_types( $args, 'objects' );
-
-			foreach ( $post_types as $post_type ) {
-
-				if ( $post_type->name != 'attachment' ) {
-
-					if ( in_array( $post_type->name, $option ) ) {
-						$checked = 'checked="checked"';
-					} else {
-						$checked = '';
-					}
-
-					?>
-
-						<fieldset>
-							<label for="<?php echo $this->plugin_name . '-settings[' . $field_id . '][' . $post_type->name . ']'; ?>">
-								<input type="checkbox" name="<?php echo $this->plugin_name . '-settings[' . $field_id . '][]'; ?>" id="<?php echo $this->plugin_name . '-settings[' . $field_id . '][' . $post_type->name . ']'; ?>" value="<?php echo esc_attr( $post_type->name ); ?>" <?php echo $checked; ?> />
-								<span class="description"><?php echo esc_html( $post_type->label ); ?></span>
-							</label>
-						</fieldset>
-
-					<?php
-
-				}
-
-			}
-
-		} else {
-
-			$field_args = $args['options'];
-
-			foreach ( $field_args as $field_arg_key => $field_arg_value ) {
-
-				if ( in_array( $field_arg_key, $option ) ) {
-					$checked = 'checked="checked"';
-				} else {
-					$checked = '';
-				}
-
-				?>
-
-					<fieldset>
-						<label for="<?php echo $this->plugin_name . '-settings[' . $field_id . '][' . $field_arg_key . ']'; ?>">
-							<input type="checkbox" name="<?php echo $this->plugin_name . '-settings[' . $field_id . '][]'; ?>" id="<?php echo $this->plugin_name . '-settings[' . $field_id . '][' . $field_arg_key . ']'; ?>" value="<?php echo esc_attr( $field_arg_key ); ?>" <?php echo $checked; ?> />
-							<span class="description"><?php echo esc_html( $field_arg_value ); ?></span>
-						</label>
-					</fieldset>
-
-				<?php
-
-			}
-
-		}
-
-		?>
-
-			<p class="description"><?php echo esc_html( $field_description ); ?></p>
-
-		<?php
-
-	} */
-
-	/**
-	 * Sandbox our inputs with text
-	 *
-	 * @since    1.0.0
-	 */
-	public function sandbox_add_settings_field_input_text( $args ) {
-
-		$field_id = $args['label_for'];
-		$field_default = $args['default'];
-
-		$options = get_option( $this->plugin_name . '-settings' );
-		$option = $field_default;
-
-		if ( ! empty( $options[ $field_id ] ) ) {
-
-			$option = $options[ $field_id ];
-
-		}
-
-		?>
-		
-			<input type="text" name="<?php echo $this->plugin_name . '-settings[' . $field_id . ']'; ?>" id="<?php echo $this->plugin_name . '-settings[' . $field_id . ']'; ?>" value="<?php echo esc_attr( $option ); ?>" class="regular-text" /><div class="inst-name-btn"></div>
-
-		<?php
-
-	}
-
-    public function add_top_level_course () {
-        error_log('this worked');
+    public function add_course () {
+        error_log('called in add course');
         $user_id = wp_get_current_user()->ID;
 
         if(isset($_POST['ftmv_add_course_nonce'])) {
+            
             if(wp_verify_nonce($_POST['ftmv_add_course_nonce'], 'ftmv_add_course_nonce')) {
+
+                echo 'nonce verified';
                 
-                $new_top_level_course = sanitize_text_field( $_POST['course-name'] );
+                $new_course = sanitize_text_field( $_POST['course-name'] );
+                $programme_id = sanitize_text_field( $_POST['programme-id'] );
+
+                date_default_timezone_set('Africa/Johannesburg');
+
+                $time_stamp = date("Y-m-d H:i:s"); 
+                $start_date = sanitize_text_field( $_POST['course-start-date'] );
+                $end_date = sanitize_text_field( $_POST['course-end-date'] );
+
+                //error_log('TIME = ' . $today . ' We are going to save course name = ' . $new_top_level_course . ' and user Id = ' . $user_id . 'to the database');
+                
+                global $wpdb;
+                $course_table = $wpdb->prefix.'ftmv_lms_course_table';
+                $programme_table = $wpdb->prefix.'ftmv_lms_main_programme_table';
+                
+                $data = array('name' => $new_course, 'timecreated' => $time_stamp, 'created_user_id' => $user_id, 'main_programme_id' => $programme_id, 'startdate' => $start_date,  'enddate' => $end_date);
+                
+                $format = array('%s', '%s', '%d', '%d', '%s', '%s');
+                
+                $wpdb->insert($course_table, $data, $format);
+
+                $programme_query = "UPDATE {$programme_table} SET course_count = course_count + 1 WHERE id = {$programme_id}";
+
+                $programme_result = $wpdb->get_results( $programme_query, ARRAY_A );
+
+                error_log($programme_query);
+
+                error_log($programme_result);
+
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) ); 
+                 
+
+            } else {
+                exit;
+            }
+        }
+    } 
+
+    public function add_top_level_programme () {
+        error_log('this worked');
+        $user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_add_programme_nonce'])) {
+            if(wp_verify_nonce($_POST['ftmv_add_programme_nonce'], 'ftmv_add_programme_nonce')) {
+                
+                $new_top_level_programme = sanitize_text_field( $_POST['programme-name'] );
                 date_default_timezone_set('Africa/Johannesburg');
                 $time_stamp = date("Y-m-d H:i:s");
 
                 //error_log('TIME = ' . $today . ' We are going to save course name = ' . $new_top_level_course . ' and user Id = ' . $user_id . 'to the database');
                 
                 global $wpdb;
-                $table = $wpdb->prefix.'ftmv_lms_main_course_table';
+                $table = $wpdb->prefix.'ftmv_lms_main_programme_table';
                 
-                $data = array('name' => $new_top_level_course, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
+                $data = array('name' => $new_top_level_programme, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
                 
                 $format = array('%s', '%s', '%d');
                 
                 $wpdb->insert($table,$data,$format);
 
-                wp_redirect( admin_url("/admin.php?page=ftmv-lms-general") );
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programmes") );
                  
 
             } else {

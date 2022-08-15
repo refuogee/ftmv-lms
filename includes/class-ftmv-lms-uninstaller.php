@@ -29,8 +29,9 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+error_log('inside clas--unisntaller');
 
-class ftmv_tp_Uninstaller {
+class ftmv_lms_Uninstaller {
 
 	/**
 	 * On deactivation delete the "Saved" page.
@@ -40,15 +41,18 @@ class ftmv_tp_Uninstaller {
 	 * @since    1.0.0
 	 */
 	public static function uninstall() {
-
+        error_log('uninstall called');
 		global $wpdb;
         $tableArray = [   
-          $wpdb->prefix . "ftmv_main_course_table",
-          $wpdb->prefix . "ftmv_sub_course_table"
+          $wpdb->prefix . "ftmv_lms_main_programme_table",
+          $wpdb->prefix . "ftmv_lms_course_table"
        ];
 
       foreach ($tableArray as $tablename) {
          $wpdb->query("DROP TABLE IF EXISTS $tablename");
+         if ($wpdb->last_error) {
+            echo 'You done bad! ' . $wpdb->last_error;
+          }
       }
 
 	}

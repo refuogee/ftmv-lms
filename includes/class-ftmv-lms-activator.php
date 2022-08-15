@@ -33,30 +33,33 @@ class ftmv_lms_Activator {
 	public static function activate() {
         
         global $wpdb;
-        
-        $first_table_name = $wpdb->prefix . 'ftmv_lms_main_course_table';
-        $second_table_name = $wpdb->prefix . 'ftmv_lms_sub_course_table';
+
+        $first_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
+        $second_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
 
         $charset_collate = $wpdb->get_charset_collate();
 
         $first_table_sql = "CREATE TABLE $first_table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
-        timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        timecreated datetime DEFAULT '0000-00-00' NOT NULL,
         name tinytext NOT NULL,
         created_user_id mediumint(9) NOT NULL,
-        PRIMARY KEY  (id)
+        PRIMARY KEY  (id),
+        course_count int DEFAULT 0
         ) $charset_collate;";
 
         $second_table_sql = "CREATE TABLE $second_table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
-            timecreated datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+            timecreated datetime DEFAULT '0000-00-00' NOT NULL,
             name tinytext NOT NULL,            
+            startdate datetime DEFAULT '0000-00-00' NOT NULL,
+            enddate datetime DEFAULT '0000-00-00' NOT NULL,
             created_user_id mediumint(9) NOT NULL,
-            main_course_id mediumint(9) NOT NULL,
-            FOREIGN KEY  (main_course_id) REFERENCES $first_table_name(id),
+            main_programme_id mediumint(9) NOT NULL,
+            student_count int DEFAULT 0,
             PRIMARY KEY  (id)
             ) $charset_collate;";
-
+        
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
         dbDelta( $first_table_sql );

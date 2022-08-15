@@ -1,3 +1,71 @@
-.main-course-list-table {
-    width : 99%;
+.programme-courses-table , .main-course-list-table {
+    width : 70%;
+}
+
+.programme-courses-table {
+    margin-top : 1rem;
+}
+
+h2 {
+    font-size : 2rem;
+}
+
+p {
+    font-size: 1rem;
+}
+
+.column-id {
+    width: 5%;
+}
+
+label {
+    font-size: 1rem;
+}
+
+.ftmv-lms-form-layout-container {
+    margin-bottom: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+.ftmv-lms-form-button-container {
+    margin-top: 1rem;
+}
+
+.programme-created-user {
+    margin-top : 1rem;
+}
+
+.ftmv-lms-course-details-form, .ftmv-lms-programme-details-form {
+ 
+    padding: 0rem 0rem 2rem 0rem;
+    width: 30%;
+}
+
+.course-start-date {
+    display: flex;
+}
+
+.manage-column {
+    font-weight: 600 !important;
+}
+
+.wp-list-table th{
+    font-size: 1.1rem !important;
+}
+
+.wp-list-table td{
+    font-size: 1rem !important;
+    font-weight: 400 !important;
+}
+
+.wp-list-table .row-title {
+    font-size: 1rem !important;
+}
+
+button {
+    font-size: 1rem !important;
 }

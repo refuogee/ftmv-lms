@@ -55,9 +55,10 @@
             {
                 $columns = array(
                     'id'                => 'ID',
-                    'name'              => 'Course Name',
+                    'name'              => 'Programme Name',
                     'timecreated'       => 'Date Created',
-                    'created_user'   => 'Who Created The Course'
+                    'created_user'      => 'Who Created The Programme',
+                    'course_count'      => 'Courses'
                 );
         
                 return $columns;
@@ -92,7 +93,9 @@
             {
                 global $wpdb;
                 
-                $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id WHERE first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
+                // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id WHERE first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
+
+                $query = "SELECT programme_info.id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user', programme_info.course_count FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID";
 
                 $result = $wpdb->get_results( $query, ARRAY_A );
 
@@ -113,7 +116,9 @@
             
             public function column_name( $item)
             {
-                $edit_link = admin_url( 'post.php?action=edit&amp;post=' .  $item->name  );
+                error_log( print_r($item, true));
+                error_log( $item['id'] );
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-programme-overview&id=' .  $item['id']  );
                 $view_link = get_permalink( $item['name'] ); 
                 $output    = '';
         
@@ -122,8 +127,8 @@
         
                 // Get actions.
                 $actions = array(
-                    'edit'   => '<a target="_blank" href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>',
-                    'delete'   => '<a target="_blank" href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>',
+                    'edit'   => '<a href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>',
+                    'delete'   => '<a href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>',
                 );
         
                 $row_actions = array();
@@ -144,6 +149,7 @@
                     case 'timecreated':
                     case 'name': 
                     case 'created_user':
+                    case 'course_count':
                         return $item[ $column_name ];
                     default:
                         return print_r( $item, true ) ;
@@ -194,11 +200,11 @@
 <div id="wrap">
 	<form method="post" action="options.php">
         <div class="wrap-test">        
-            <h2>Top Level Courses Page:</h2>
+            <h2>Programmes:</h2>
             <p>
-                This is the top level course page. <br>
-                Start by creating a top level course. <br>
-                Once that has been done you will then be able to create facilitators and the dates for courses to run.
+                This is the main programme page. <br>
+                Start by creating a programme. <br>
+                Once a programme has been created you will then be able to create and assign facilitators and create scheduled courses to run.
             </p>
             <div class="main-course-list-table">
                 <?php
@@ -207,7 +213,7 @@
                     $table->display();            
                 ?>
             </div>            
-            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course'); ?>"> <button type="button" class="button button-primary">Add Course</button></a>
+            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-programme'); ?>"> <button type="button" class="button button-primary">Add New Programme</button></a>
         </div>
 	</form>
 </div>

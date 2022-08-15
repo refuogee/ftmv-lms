@@ -51,18 +51,25 @@ function activate_ftmv_lms() {
  * This action is documented in includes/class-ftmv-lms-deactivator.php
  */
 function deactivate_ftmv_lms() {
+    error_log('inside deactivate function ftmv-lms.php');
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-ftmv-lms-deactivator.php';
 	ftmv_lms_Deactivator::deactivate();
 }
 
-/* function uninstall_ftmv_lms() {
+function uninstall_ftmv_lms() {
+    error_log('inside function uninstall call ftmv-lms.php');
+
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-ftmv-lms-uninstaller.php';
 	ftmv_lms_Uninstaller::uninstall();
-} */
+}
+
 
 register_activation_hook( __FILE__, 'activate_ftmv_lms' );
 register_deactivation_hook( __FILE__, 'deactivate_ftmv_lms' );
-//register_uninstall_hook( __FILE__, 'uninstall_ftmv_lms' );
+
+error_log('just before uninstall call in ftmv-lms.php');
+register_uninstall_hook( __FILE__, 'uninstall_ftmv_lms' );
+
 
 /**
  * The core plugin class that is used to define internationalization,
