@@ -19,7 +19,7 @@ $ftmv_add_programme_nonce = wp_create_nonce('ftmv_add_programme_nonce');
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
 <div id="wrap">
-<form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_programme">
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_programme">
         <input type="hidden" name="action" value="ftmv_add_programme">
 		<input type="hidden" name="ftmv_add_programme_nonce" value="<?php echo $ftmv_add_programme_nonce ?>" />			    			
         <div class="wrap-test">        

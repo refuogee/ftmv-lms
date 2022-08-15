@@ -115,29 +115,7 @@ class ftmv_lms_Admin {
             'ftmv-lms-overview',
             array( $this, 'display_admin_overview_screen'),
             'dashicons-forms',3
-        );
-
-        /* if ( isset( get_option('ftmv-lms-settings')['institution-name'] ) ) {
-            
-            add_menu_page(
-                get_option('ftmv-lms-settings')['institution-name'] . ' Admin',
-                __( get_option('ftmv-lms-settings')['institution-name'] . ' Admin', 'ftmv-lms' ),            
-                'manage_options',
-                'ftmv-lms',
-                array( $this, 'display_general_settings_page'),
-                'dashicons-forms',3
-            );   
-            
-        } else {
-            add_menu_page(
-                'FTMV Test Plugin',
-                __( 'Learner Management Plugin', 'ftmv-lms' ),            
-                'manage_options',
-                'ftmv-lms',
-                array( $this, 'display_general_settings_page'),
-                'dashicons-forms',3
-            );
-        } */
+        );        
 
         add_submenu_page(
 			'ftmv-lms-overview',
@@ -177,6 +155,15 @@ class ftmv_lms_Admin {
 
         add_submenu_page(
 			'ftmv-lms-overview',
+			__( 'Course Details', 'ftmv-lms-course-overview' ),
+			__( 'Course Details', 'ftmv-lms-course-overview' ),
+			'manage_options',
+			'ftmv-lms-course-overview',
+			array( $this, 'display_course_overview' )
+		);
+
+        add_submenu_page(
+			'ftmv-lms-overview',
 			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
 			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
 			'manage_options',
@@ -191,16 +178,19 @@ class ftmv_lms_Admin {
 
         $hidden_submenus = array(
             'ftmv-lms-add-course' => true,
+            'ftmv-lms-course-overview' => true,
+            'ftmv-lms-programme-overview' => true,
+            'ftmv-lms-add-programme' => true
         );
 
         // Select another submenu item to highlight (optional).
         if ( $plugin_page && isset( $hidden_submenus[ $plugin_page ] ) ) {
-            $submenu_file = 'ftmv-lms';
+            $submenu_file = 'ftmv-lms-overview';
         }
 
         // Hide the submenu.
         foreach ( $hidden_submenus as $submenu => $unused ) {
-            remove_submenu_page( 'ftmv-lms', $submenu );
+            remove_submenu_page( 'ftmv-lms-overview', $submenu );
         }
 
         return $submenu_file;
@@ -215,6 +205,12 @@ class ftmv_lms_Admin {
     public function display_add_course() {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-course.php';
+
+	}
+
+    public function display_course_overview() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-course-overview.php';
 
 	}
     
@@ -391,5 +387,95 @@ class ftmv_lms_Admin {
             }
         }
     }
+
+    public function edit_programme () {        
+        
+        $user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_edit_programme_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_edit_programme_nonce'], 'ftmv_edit_programme_nonce')) {
+
+                // echo 'nonce verified';
+                
+                $new_course = sanitize_text_field( $_POST['programme-name'] );
+                $programme_id = sanitize_text_field( $_GET['programme-id'] );
+                
+                global $wpdb;
+                
+                $programme_table = $wpdb->prefix.'ftmv_lms_main_programme_table';
+
+                $programme_update_query = "UPDATE {$programme_table} SET name = '{$new_course}' WHERE id = {$programme_id}";
+
+                $programme_result = $wpdb->get_results( $programme_update_query, ARRAY_A );
+
+                error_log($programme_result);
+
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) ); 
+                 
+
+            } else {
+                echo 'nonce NOT verified';
+                exit;
+            }
+        }
+    } 
+
+    public function edit_course () {        
+        
+        $user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_edit_course_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_edit_course_nonce'], 'ftmv_edit_course_nonce')) 
+            {
+                $update_name = false;
+                // echo 'nonce verified';
+                if (isset($_POST['course-name']) && strlen($_POST['course-name']) > 0 )
+                {
+                    $new_course_name = sanitize_text_field( $_POST['course-name'] );
+                    $update_name = true;
+                }
+
+                $course_id = sanitize_text_field( $_GET['course-id'] );
+
+                $course_start_date = sanitize_text_field( $_POST['course-startdate'] );
+                $course_end_date = sanitize_text_field( $_POST['course-enddate'] );
+
+                // echo $course_start_date;
+                // echo $course_end_date;
+
+                var_dump($_POST);
+                
+                global $wpdb;
+                
+                $course_table = $wpdb->prefix.'ftmv_lms_course_table';
+ 
+                if ($update_name) 
+                {
+                    $course_update_query = "UPDATE {$course_table} SET name = '{$new_course_name}', startdate = '{$course_start_date}', enddate = '{$course_end_date}' WHERE id = {$course_id}";
+                    error_log($course_update_query);
+                }
+                else
+                {
+                    $course_update_query = "UPDATE {$course_table} SET startdate = '{$course_start_date}', enddate = '{$course_end_date}' WHERE id = {$course_id}";
+                    error_log($course_update_query);
+                }
+                
+                $course_result = $wpdb->get_results( $course_update_query, ARRAY_A );
+
+                error_log($course_result); 
+
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id=" . $course_id) );
+                 
+
+            } 
+            else 
+            {
+                echo 'nonce NOT verified';
+                exit;
+            }
+        }
+    } 
 
 }

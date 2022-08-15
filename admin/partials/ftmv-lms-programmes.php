@@ -97,11 +97,14 @@
 
                 $query = "SELECT programme_info.id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user', programme_info.course_count FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID";
 
-                $result = $wpdb->get_results( $query, ARRAY_A );
+                $results = $wpdb->get_results( $query, ARRAY_A );
 
-                $data = $result;
+                foreach ($results as $key => $result) {
+                    $date_created = strtotime($result['timecreated']);                    
+                    $results[$key]['timecreated'] = date('j M Y', $date_created); 
+                }
 
-                return $data;
+                return $results;
             }
         
             /**

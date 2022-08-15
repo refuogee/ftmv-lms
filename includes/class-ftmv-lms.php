@@ -158,11 +158,13 @@ class ftmv_lms {
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
         // Hide SubMenu Pages that don't need menu links
-        /* $this->loader->add_filter( 'submenu_file', $plugin_admin, 'hide_pages' ); */
+        $this->loader->add_filter( 'submenu_file', $plugin_admin, 'hide_pages' );
 
         // Hooks for form submits
         $this->loader->add_action( 'admin_post_ftmv_add_programme', $plugin_admin, 'add_top_level_programme');
         $this->loader->add_action( 'admin_post_ftmv_add_course', $plugin_admin, 'add_course');
+        $this->loader->add_action( 'admin_post_ftmv_edit_programme', $plugin_admin, 'edit_programme');
+        $this->loader->add_action( 'admin_post_ftmv_edit_course', $plugin_admin, 'edit_course');
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );

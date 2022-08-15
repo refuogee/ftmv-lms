@@ -13,24 +13,31 @@
  */
 
 
-// $arg = get_query_var('id');
-// $arg = $_GET['id'];
-$progamme_id = $_GET['id'];
-// $url_components = parse_url($url);
 
-$ftmv_edit_programme_nonce = wp_create_nonce('ftmv_edit_programme_nonce');
+$course_id = $_GET['course-id'];
 
 global $wpdb;
 
+$ftmv_edit_course_nonce = wp_create_nonce('ftmv_edit_course_nonce');
+
 // error_log(gettype($arg));
+// error_log()
 
-$query = "SELECT programme_info.id AS id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID WHERE programme_info.id =".$progamme_id."";
+// $query = "SELECT course_info.id, course_info.timecreated, course_info.name, course_info.startdate, course_info.enddate, course_info.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON course_info.created_user_id = user_info.ID WHERE course_info.id =".$course_id."";
+$query = "SELECT course_info.main_programme_id AS programme_id, course_info.id, course_info.timecreated, course_info.name, course_info.startdate, course_info.enddate, course_info.student_count, user_info.display_name AS 'created_user', programme_info.name AS 'main_programme' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON course_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON course_info.main_programme_id = programme_info.id WHERE course_info.id =".$course_id. " AND programme_info.id = course_info.main_programme_id";
 
-// error_log($query);
 
-$result = $wpdb->get_results( $query, ARRAY_A );
 
-// error_log( print_r($result, true) );
+$results = $wpdb->get_results( $query, ARRAY_A );
+
+foreach ($results as $key => $result) {    
+    $start_date = strtotime($result['startdate']);                    
+    $end_date = strtotime($result['enddate']);                    
+    $results[$key]['startdate'] = date('Y-m-d', $start_date); 
+    $results[$key]['enddate'] = date('Y-m-d', $end_date); 
+}
+
+// echo( print_r($results, true) );
 
 
 if( is_admin() && !class_exists( 'WP_List_Table' ) )
@@ -79,7 +86,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                     'name'              => 'Course Name',
                     'startdate'         => 'Start Date',
                     'enddate'           => 'End Date',
-                    'created_user'      => 'Created By',
+                    'created_user'      => 'Course Created By',
                     'timecreated'       => 'Date Created',
                     'student_count'     => 'Students'
                 );
@@ -119,20 +126,19 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id `WHERE` first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
 
                 // $query = "SELECT course.id, course.timecreated, course.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.created_user_id = user_info.ID" ;
-                $progamme_id = $_GET['id'];
-                $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $progamme_id . "";
+                /* $progamme_id = $_GET['id'];
+                $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $progamme_id;
                 
                 $results = $wpdb->get_results( $query, ARRAY_A );
                 
                 foreach ($results as $key => $result) {
                     $start_date = strtotime($result['startdate']);                    
                     $end_date = strtotime($result['enddate']);                    
-                    $date_created = strtotime($result['timecreated']);                    
-                    $results[$key]['startdate'] = date('j M Y', $start_date); 
-                    $results[$key]['enddate'] = date('j M Y', $end_date); 
-                    $results[$key]['timecreated'] = date('j M Y', $date_created); 
+                    $results[$key]['startdate'] = date('d/M/Y', $start_date); 
+                    $results[$key]['enddate'] = date('d/M/Y', $end_date); 
                 }
-                return $results; 
+                
+                return $results;  */
             }
         
             /**
@@ -149,7 +155,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 /* error_log( print_r($item, true));
                 error_log( $item['id'] ); */
-                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id']  );
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-programme-overview&id=' .  $item['id']  );
                 $view_link = get_permalink( $item['name'] ); 
                 $output    = '';
         
@@ -232,72 +238,108 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
 <div id="wrap">
-    <h2>Programme Details:</h2>    
+    <h2>Course Details:</h2>    
     <p>
-        On this page you can see the details for a specific programme as well as the courses that fall under this programme. <br> 
-        You can add new courses that will then be associated with the programme.
+        On this page you can see the details for a specific course as well as the students that are linked to this course. <br> 
+        You can add new students that will then be associated with the course.
     </p>
     <hr>
-    <h3>Programme Details:</h3>    
+    <h3>Course Details:</h3>    
         <p>            
-            You can edit the programme name here or delete the programme entirely.<br>
-    </p>   
-    
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-programme-details-form">        
-        <input type="hidden" name="action" value="ftmv_edit_programme">  
-		<input type="hidden" name="ftmv_edit_programme_nonce" value="<?php echo $ftmv_edit_programme_nonce ?>" />			    			  
+            You can edit the course name here or delete the course entirely.<br>
+    </p>    
+
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. $results[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_course" class="ftmv-lms-programme-details-form">        
+        <input type="hidden" name="action" value="ftmv_edit_course">  
+		<input type="hidden" name="ftmv_edit_course_nonce" value="<?php echo $ftmv_edit_course_nonce ?>" />			    			  
+        
         
         <!-- ftmv-lms-form-layout-container -->
 
-        <div class="ftmv-lms-form-layout-container programme-created-date">
+        <div class="ftmv-lms-form-layout-container course-created-date">
             <div class="ftmv-lms-form-label-container">
-                <label for="programme-created-date">Date Created:</label>
-            </div>
-            
+                <label for="course-created-date">Date Created:</label>
+            </div>            
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-date" id="programme-created-date" value="<?php echo $result[0]['timecreated']?>" disabled>
+                <input type="text" name="course-created-date" id="course-created-date" value="<?php echo $results[0]['timecreated']?>" disabled>
             </div>
         </div>
 
-        <div class="ftmv-lms-form-layout-container programme-created-user">
+        <div class="ftmv-lms-form-layout-container course-created-user">
             <div class="ftmv-lms-form-label-container">
-                <label for="programme-created-user">Created by:</label>
+                <label for="course-created-user">Created by:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-user" id="programme-created-user" value="<?php echo $result[0]['created_user']; ?>" disabled>
+                <input type="text" name="course-created-user" id="course-created-user" value="<?php echo $results[0]['created_user']; ?>" disabled>
             </div>
         </div>
-
 
         <div class="ftmv-lms-form-layout-container programme-name">
             <div class="ftmv-lms-form-label-container">
-                <label for="programme-name">Programme Name:</label>
+                <label for="programme-name">Top Level Programme:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo $result[0]['name']?>"> <br>
+                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo $results[0]['main_programme']?>" disabled> <br>
             </div>
         </div>
 
+        <div class="ftmv-lms-form-layout-container course-name">
+            <div class="ftmv-lms-form-label-container">
+                <label for="course-name">Course Name:</label>
+            </div>
+            <div class="ftmv-lms-input-container">
+                <input type="text" name="course-name" id="course-name" placeholder="<?php echo $results[0]['name']?>"> <br>
+            </div>
+        </div>
+
+        <div class="ftmv-lms-form-layout-container course-startdate">
+            <div class="ftmv-lms-form-label-container">
+                <label for="course-startdate">Course Start Date:</label>
+            </div>
+            <div class="ftmv-lms-input-container">
+                <input type="date" name="course-startdate" id="course-startdate" value="<?php echo $results[0]['startdate']?>"> <br>
+            </div>
+        </div>
+
+        <div class="ftmv-lms-form-layout-container course-enddate">
+            <div class="ftmv-lms-form-label-container">
+                <label for="course-enddate">Course End Date:</label>
+            </div>
+            <div class="ftmv-lms-input-container">
+                <input type="date" name="course-enddate" id="course-enddate" value ="<?php echo $results[0]['enddate']?>"> <br>
+            </div>
+        </div>
+
+        <div class="ftmv-lms-form-layout-container course-student-count">
+            <div class="ftmv-lms-form-label-container">
+                <label for="course-student-count">Students Registered:</label>
+            </div>
+            <div class="ftmv-lms-input-container">
+                <input type="number" name="course-student-count" id="course-student-count" value ="<?php echo $results[0]['student_count']?>" disabled> <br>
+            </div>
+        </div>
 
         <div class="ftmv-lms-form-button-container">
+            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' .  $results[0]['programme_id'] )?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>          
             <button type="submit" class="button button-primary">Save Changes</button>            
-            <button type="button" class="button button-primary">Delete Programme</button>            
+            <button type="button" class="button button-primary">Delete Course</button>            
+            
         </div>
     </form>
     <hr>
     <div class="programme-courses-table">
-        <h3>Course List:</h3>    
+        <h3>Student List:</h3>    
         <p>            
-            This is a list of all the courses associated with the program and the dates they are scheduled for. <br>
-            If you wish to edit a course or add students to a course click on the course name or click edit. <br>
+            This is a list of all the students who have been created and added to this course. <br>
+            If you wish to edit a student click edit below student name or click on the student's name. <br>
             To delete click delete. <br>
         </p>
         <?php
-            $table = new List_Table();
+           /*  $table = new List_Table();
             $table->prepare_items();
-            $table->display();            
+            $table->display();      */      
         ?>
     </div>
-    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id']) . '' ?>"> <button type="button" class="button button-primary">Add New Course</button></a>
+    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id']) . '' ?>"> <button type="button" class="button button-primary">Add New Student</button></a>
 
 </div>

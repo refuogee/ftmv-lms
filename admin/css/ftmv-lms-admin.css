@@ -27,6 +27,10 @@ label {
     margin-right: 1rem;
     display: flex;
     justify-content: space-between;
+
+    padding: 0.5rem;
+    align-items: center;
+    font-weight: 500;
 }
 
 
@@ -54,11 +58,11 @@ label {
 }
 
 .wp-list-table th{
-    font-size: 1.1rem !important;
+    font-size: 1rem !important;
 }
 
 .wp-list-table td{
-    font-size: 1rem !important;
+    font-size: 0.9rem !important;
     font-weight: 400 !important;
 }
 
@@ -68,4 +72,8 @@ label {
 
 button {
     font-size: 1rem !important;
+}
+
+tfoot tr .manage-column {
+    font-size: 0.9rem !important;
 }

@@ -26,10 +26,10 @@
  */
 
 // If uninstall not called from WordPress, then exit.
-if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
+/* if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
-error_log('inside clas--unisntaller');
+error_log('inside clas--unisntaller'); */
 
 class ftmv_lms_Uninstaller {
 
@@ -40,8 +40,7 @@ class ftmv_lms_Uninstaller {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function uninstall() {
-        error_log('uninstall called');
+	public static function uninstall() {        
 		global $wpdb;
         $tableArray = [   
           $wpdb->prefix . "ftmv_lms_main_programme_table",
