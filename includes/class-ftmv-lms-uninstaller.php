@@ -40,17 +40,26 @@ class ftmv_lms_Uninstaller {
 	 *
 	 * @since    1.0.0
 	 */
-	public static function uninstall() {        
+	public static function uninstall() {      
+
 		global $wpdb;
+
+        $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
+        $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
+        $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
+        $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
+
         $tableArray = [   
-          $wpdb->prefix . "ftmv_lms_main_programme_table",
-          $wpdb->prefix . "ftmv_lms_course_table"
-       ];
+                        $main_programme_table_name,
+                        $course_table_name,
+                        $facilitator_table_name,
+                        $student_table_name
+                    ];
 
       foreach ($tableArray as $tablename) {
          $wpdb->query("DROP TABLE IF EXISTS $tablename");
          if ($wpdb->last_error) {
-            echo 'You done bad! ' . $wpdb->last_error;
+            error_log ('You done bad! ' . $wpdb->last_error);
           }
       }
 

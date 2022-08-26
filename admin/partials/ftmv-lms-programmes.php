@@ -58,7 +58,8 @@
                     'name'              => 'Programme Name',
                     'timecreated'       => 'Date Created',
                     'created_user'      => 'Who Created The Programme',
-                    'course_count'      => 'Courses'
+                    'course_count'      => 'Courses',
+                    'facilitator_count' => 'Facilitators'
                 );
         
                 return $columns;
@@ -95,7 +96,7 @@
                 
                 // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id WHERE first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
 
-                $query = "SELECT programme_info.id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user', programme_info.course_count FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID";
+                $query = "SELECT programme_info.id, programme_info.timecreated, programme_info.name, programme_info.facilitator_count , user_info.display_name AS 'created_user', programme_info.course_count FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID";
 
                 $results = $wpdb->get_results( $query, ARRAY_A );
 
@@ -153,6 +154,7 @@
                     case 'name': 
                     case 'created_user':
                     case 'course_count':
+                    case 'facilitator_count':
                         return $item[ $column_name ];
                     default:
                         return print_r( $item, true ) ;

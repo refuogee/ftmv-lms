@@ -248,8 +248,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         <p>            
             You can edit the course name here or delete the course entirely.<br>
     </p>    
-
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. $results[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_course" class="ftmv-lms-programme-details-form">        
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. esc_attr($results[0]['id']) .'' ) ); ?>" method="post" id="ftmv_edit_course" class="ftmv-lms-programme-details-form">        
         <input type="hidden" name="action" value="ftmv_edit_course">  
 		<input type="hidden" name="ftmv_edit_course_nonce" value="<?php echo $ftmv_edit_course_nonce ?>" />			    			  
         
@@ -261,7 +260,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-created-date">Date Created:</label>
             </div>            
             <div class="ftmv-lms-input-container">
-                <input type="text" name="course-created-date" id="course-created-date" value="<?php echo $results[0]['timecreated']?>" disabled>
+                <input type="text" name="course-created-date" id="course-created-date" value="<?php echo esc_attr($results[0]['timecreated'])?>" disabled>
             </div>
         </div>
 
@@ -270,7 +269,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-created-user">Created by:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="course-created-user" id="course-created-user" value="<?php echo $results[0]['created_user']; ?>" disabled>
+                <input type="text" name="course-created-user" id="course-created-user" value="<?php echo esc_attr($results[0]['created_user']); ?>" disabled>
             </div>
         </div>
 
@@ -279,7 +278,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="programme-name">Top Level Programme:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo $results[0]['main_programme']?>" disabled> <br>
+                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo esc_attr($results[0]['main_programme'])?>" disabled> <br>
             </div>
         </div>
 
@@ -288,7 +287,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-name">Course Name:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="course-name" id="course-name" placeholder="<?php echo $results[0]['name']?>"> <br>
+                <input type="text" name="course-name" id="course-name" placeholder="<?php echo esc_attr($results[0]['name'])?>" required> <br>
             </div>
         </div>
 
@@ -297,7 +296,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-startdate">Course Start Date:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="date" name="course-startdate" id="course-startdate" value="<?php echo $results[0]['startdate']?>"> <br>
+                <input type="date" name="course-startdate" id="course-startdate" value="<?php echo esc_attr($results[0]['startdate'])?>" required> <br>
             </div>
         </div>
 
@@ -306,7 +305,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-enddate">Course End Date:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="date" name="course-enddate" id="course-enddate" value ="<?php echo $results[0]['enddate']?>"> <br>
+                <input type="date" name="course-enddate" id="course-enddate" value ="<?php echo esc_attr($results[0]['enddate'])?>" required> <br>
             </div>
         </div>
 
@@ -315,15 +314,16 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="course-student-count">Students Registered:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="number" name="course-student-count" id="course-student-count" value ="<?php echo $results[0]['student_count']?>" disabled> <br>
+                <input type="number" name="course-student-count" id="course-student-count" value ="<?php echo esc_attr($results[0]['student_count'])?>" disabled> <br>
             </div>
         </div>
 
         <div class="ftmv-lms-form-button-container">
-            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' .  $results[0]['programme_id'] )?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>          
-            <button type="submit" class="button button-primary">Save Changes</button>            
-            <button type="button" class="button button-primary">Delete Course</button>            
-            
+            <div class="ftmv-lms-form-save-delete-button-container">
+                <button type="submit" class="button button-primary">Save Changes</button>            
+                <button type="button" class="button button-primary delete-btn">Delete Course</button>            
+            </div>
+            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' . esc_attr($results[0]['programme_id'])) ?>"><button type="button" class="button button-primary">Back to Programme Overview</button></a>
         </div>
     </form>
     <hr>
@@ -340,6 +340,6 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             $table->display();      */      
         ?>
     </div>
-    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id']) . '' ?>"> <button type="button" class="button button-primary">Add New Student</button></a>
+    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . esc_attr($result[0]['id'])) . '' ?>"> <button type="button" class="button button-primary">Add New Student</button></a>
 
 </div>

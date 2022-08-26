@@ -96,7 +96,7 @@ class ftmv_lms_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/toptal-save-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ftmv-lms-admin-scripts.js', array( 'jquery' ), $this->version, true );
 
 	}
 
@@ -310,7 +310,7 @@ class ftmv_lms_Admin {
 	}
 
     public function add_course () {
-        error_log('called in add course');
+        
         $user_id = wp_get_current_user()->ID;
 
         if(isset($_POST['ftmv_add_course_nonce'])) {
@@ -327,8 +327,6 @@ class ftmv_lms_Admin {
                 $time_stamp = date("Y-m-d H:i:s"); 
                 $start_date = sanitize_text_field( $_POST['course-start-date'] );
                 $end_date = sanitize_text_field( $_POST['course-end-date'] );
-
-                //error_log('TIME = ' . $today . ' We are going to save course name = ' . $new_top_level_course . ' and user Id = ' . $user_id . 'to the database');
                 
                 global $wpdb;
                 $course_table = $wpdb->prefix.'ftmv_lms_course_table';
@@ -344,10 +342,6 @@ class ftmv_lms_Admin {
 
                 $programme_result = $wpdb->get_results( $programme_query, ARRAY_A );
 
-                error_log($programme_query);
-
-                error_log($programme_result);
-
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) ); 
                  
 
@@ -357,8 +351,18 @@ class ftmv_lms_Admin {
         }
     } 
 
+    function create_programme_student_role () 
+    {
+
+    }
+
+    function create_programme_facilitator_role () 
+    {
+
+    }
+
     public function add_top_level_programme () {
-        error_log('this worked');
+        
         $user_id = wp_get_current_user()->ID;
 
         if(isset($_POST['ftmv_add_programme_nonce'])) {
@@ -367,8 +371,6 @@ class ftmv_lms_Admin {
                 $new_top_level_programme = sanitize_text_field( $_POST['programme-name'] );
                 date_default_timezone_set('Africa/Johannesburg');
                 $time_stamp = date("Y-m-d H:i:s");
-
-                //error_log('TIME = ' . $today . ' We are going to save course name = ' . $new_top_level_course . ' and user Id = ' . $user_id . 'to the database');
                 
                 global $wpdb;
                 $table = $wpdb->prefix.'ftmv_lms_main_programme_table';
@@ -408,8 +410,6 @@ class ftmv_lms_Admin {
                 $programme_update_query = "UPDATE {$programme_table} SET name = '{$new_course}' WHERE id = {$programme_id}";
 
                 $programme_result = $wpdb->get_results( $programme_update_query, ARRAY_A );
-
-                error_log($programme_result);
 
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) ); 
                  
@@ -454,25 +454,18 @@ class ftmv_lms_Admin {
                 if ($update_name) 
                 {
                     $course_update_query = "UPDATE {$course_table} SET name = '{$new_course_name}', startdate = '{$course_start_date}', enddate = '{$course_end_date}' WHERE id = {$course_id}";
-                    error_log($course_update_query);
                 }
                 else
                 {
                     $course_update_query = "UPDATE {$course_table} SET startdate = '{$course_start_date}', enddate = '{$course_end_date}' WHERE id = {$course_id}";
-                    error_log($course_update_query);
                 }
                 
                 $course_result = $wpdb->get_results( $course_update_query, ARRAY_A );
-
-                error_log($course_result); 
-
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id=" . $course_id) );
-                 
-
             } 
             else 
             {
-                echo 'nonce NOT verified';
+                error_log('nonce NOT verified');
                 exit;
             }
         }

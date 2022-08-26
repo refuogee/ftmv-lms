@@ -16,17 +16,8 @@ $ftmv_add_course_nonce = wp_create_nonce('ftmv_add_course_nonce');
 $programme_id = $_GET['id'];
 
 global $wpdb;
-
-// error_log(gettype($programme_id));
-
 $query = "SELECT programme_info.name FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info WHERE programme_info.id =".$programme_id."";
-
-// error_log($query);
-
 $result = $wpdb->get_results( $query, ARRAY_A );
-
-error_log( print_r($result, true) );
-
 
 ?>
 
@@ -40,17 +31,18 @@ error_log( print_r($result, true) );
     </p>            
     
     <hr>
+    <div class="notice notice-success is-dismissible"><p>Poop</p></div>
     <form class="ftmv-lms-course-details-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_course">
             <input type="hidden" name="action" value="ftmv_add_course">
-            <input type="hidden" name="ftmv_add_course_nonce" value="<?php echo $ftmv_add_course_nonce ?>" />			    			
+            <input type="hidden" name="ftmv_add_course_nonce" value="<?php echo esc_attr($ftmv_add_course_nonce) ?>" />			    			
             <div class="wrap-test">        
-                <input type="hidden" id="programme-id" name="programme-id" value="<?php echo $programme_id; ?>">
+                <input type="hidden" id="programme-id" name="programme-id" value="<?php echo esc_attr($programme_id); ?>">
                 <div class="ftmv-lms-form-layout-container programme-name">
                     <div class="ftmv-lms-form-label-container">
                         <label for="programme-name">Programme Name:</label>
                     </div>
                     <div class="ftmv-lms-input-container">
-                        <input type="text" name="programme-name" id="programme-name" value="<?php echo $result[0]['name']; ?>" class="regular-text" disabled />            
+                        <input type="text" name="programme-name" id="programme-name" value="<?php echo esc_attr($result[0]['name']); ?>" class="regular-text" disabled />            
                     </div>
                 </div>
 
@@ -59,23 +51,23 @@ error_log( print_r($result, true) );
                         <label for="course-name">Course Name:</label>
                     </div>
                     <div class="ftmv-lms-input-container">
-                        <input type="text" name="course-name" id="course-name" class="regular-text" />            
+                        <input type="text" name="course-name" id="course-name" class="regular-text" required />            
                     </div>
                 </div>
 
                 <div class="ftmv-lms-form-layout-container course-start-date">
                     <label for="course-start-date">Course Start Date:</label>
-                    <input type="date" name="course-start-date" id="course-start-date" class="regular-text" />            
+                    <input type="date" name="course-start-date" id="course-start-date" min="" class="course-start-date regular-text" required />            
                 </div>
 
                 <div class="ftmv-lms-form-layout-container course-end-date">
                     <label for="course-end-date">Course End Date:</label>
-                    <input type="date" name="course-end-date" id="course-end-date" class="regular-text" />            
+                    <input type="date" name="course-end-date" id="course-end-date" class="course-end-date regular-text" required />            
                 </div>
 
                 <div class="ftmv-lms-form-button-container">
                     <button type="" class="button button-primary">Create New Course</button>            
-                    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programmes'); ?>"><button type="button" class="button button-primary">Back</button></a>
+                    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' . esc_attr($programme_id)); ?>"><button type="button" class="button button-primary">Cancel</button></a>
                 </div>
 
             </div>

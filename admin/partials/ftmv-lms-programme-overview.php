@@ -255,7 +255,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             </div>
             
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-date" id="programme-created-date" value="<?php echo $result[0]['timecreated']?>" disabled>
+                <input type="text" name="programme-created-date" id="programme-created-date" value="<?php echo esc_attr($result[0]['timecreated'])?>" disabled>
             </div>
         </div>
 
@@ -264,7 +264,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="programme-created-user">Created by:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-user" id="programme-created-user" value="<?php echo $result[0]['created_user']; ?>" disabled>
+                <input type="text" name="programme-created-user" id="programme-created-user" value="<?php echo esc_attr($result[0]['created_user']) ?>" disabled>
             </div>
         </div>
 
@@ -274,23 +274,25 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="programme-name">Programme Name:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo $result[0]['name']?>"> <br>
+                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo esc_attr($result[0]['name']) ?>" required> <br>
             </div>
         </div>
 
 
-        <div class="ftmv-lms-form-button-container">
-            <button type="submit" class="button button-primary">Save Changes</button>            
-            <button type="button" class="button button-primary">Delete Programme</button>            
+        <div class="ftmv-lms-form-button-container">            
+            <div class="ftmv-lms-form-save-delete-button-container">
+                <button type="submit" class="button button-primary">Save Changes</button>            
+                <button type="button" class="button button-primary delete-btn">Delete Programme</button>            
+            </div>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-programmes')) ?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>
+            
         </div>
     </form>
     <hr>
     <div class="programme-courses-table">
         <h3>Course List:</h3>    
         <p>            
-            This is a list of all the courses associated with the program and the dates they are scheduled for. <br>
-            If you wish to edit a course or add students to a course click on the course name or click edit. <br>
-            To delete click delete. <br>
+            This is a list of all the courses associated with the program and the dates they are scheduled for. <br>            
         </p>
         <?php
             $table = new List_Table();
@@ -298,6 +300,6 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             $table->display();            
         ?>
     </div>
-    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id']) . '' ?>"> <button type="button" class="button button-primary">Add New Course</button></a>
+    <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id'])) . '' ?>"> <button type="button" class="button button-primary">Add New Course</button></a>
 
 </div>

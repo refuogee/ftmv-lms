@@ -34,21 +34,29 @@ class ftmv_lms_Activator {
         
         global $wpdb;
 
-        $first_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
-        $second_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
+        
+        
+
+        $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
+        $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
+        $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
+        $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
 
         $charset_collate = $wpdb->get_charset_collate();
 
-        $first_table_sql = "CREATE TABLE $first_table_name (
+        
+        $main_programme_table_sql = "CREATE TABLE $main_programme_table_name (
         id mediumint(9) NOT NULL AUTO_INCREMENT,
         timecreated datetime DEFAULT '0000-00-00' NOT NULL,
         name tinytext NOT NULL,
         created_user_id mediumint(9) NOT NULL,
         PRIMARY KEY  (id),
-        course_count int DEFAULT 0
+        course_count int DEFAULT 0,
+        facilitator_count int DEFAULT 0
         ) $charset_collate;";
 
-        $second_table_sql = "CREATE TABLE $second_table_name (
+        
+        $course_table_sql = "CREATE TABLE $course_table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             timecreated datetime DEFAULT '0000-00-00' NOT NULL,
             name tinytext NOT NULL,            
@@ -59,12 +67,34 @@ class ftmv_lms_Activator {
             student_count int DEFAULT 0,
             PRIMARY KEY  (id)
             ) $charset_collate;";
+
+        $facilitator_table_sql = "CREATE TABLE $facilitator_table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            wp_user_id mediumint(9) NOT NULL,
+            timecreated datetime DEFAULT '0000-00-00' NOT NULL,                        
+            created_user_id mediumint(9) NOT NULL,
+            main_programme_id mediumint(9) NOT NULL,            
+            PRIMARY KEY  (id)
+            ) $charset_collate;";
+
+        $student_table_sql = "CREATE TABLE $student_table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            wp_user_id mediumint(9) NOT NULL,
+            timecreated datetime DEFAULT '0000-00-00' NOT NULL,                        
+            created_user_id mediumint(9) NOT NULL,
+            main_programme_id mediumint(9) NOT NULL,            
+            course_id mediumint(9) NOT NULL,            
+            reset_password_count int NOT NULL,            
+            accepted_terms int NOT NULL,            
+            PRIMARY KEY  (id)
+            ) $charset_collate;";
         
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
-        dbDelta( $first_table_sql );
-        dbDelta( $second_table_sql );
-
+        dbDelta( $main_programme_table_sql );
+        dbDelta( $course_table_sql );
+        dbDelta( $facilitator_table_sql );
+        dbDelta( $student_table_sql );
 	}
 
 }

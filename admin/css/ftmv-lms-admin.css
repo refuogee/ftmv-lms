@@ -10,6 +10,10 @@ h2 {
     font-size : 2rem;
 }
 
+h3 {
+    font-size: 1.5em;
+}
+
 p {
     font-size: 1rem;
 }
@@ -32,13 +36,6 @@ label {
     align-items: center;
     font-weight: 500;
 }
-
-
-
-.ftmv-lms-form-button-container {
-    margin-top: 1rem;
-}
-
 .programme-created-user {
     margin-top : 1rem;
 }
@@ -48,6 +45,21 @@ label {
     padding: 0rem 0rem 2rem 0rem;
     width: 30%;
 }
+
+@media only screen and (max-width: 1024px) {
+    .ftmv-lms-course-details-form, .ftmv-lms-programme-details-form {
+        width: 90%;
+    }
+
+    .ftmv-lms-input-container {
+        flex-basis: 70%;
+    }
+    
+    .ftmv-lms-input-container input {
+        width: 100%;
+    }
+
+  }
 
 .course-start-date {
     display: flex;
@@ -77,3 +89,28 @@ button {
 tfoot tr .manage-column {
     font-size: 0.9rem !important;
 }
+
+.delete-btn {
+    background-color: firebrick !important;
+    border-color: firebrick !important;
+}
+
+.column-name {
+    width: 30%;
+}
+
+.ftmv-lms-input-container {
+    flex-basis: 50%;
+}
+
+.ftmv-lms-input-container input {
+    width: 100%;
+}
+
+.ftmv-lms-form-button-container {
+    display: flex;
+    flex-direction: column;
+    gap : 4rem;
+    margin-top: 4rem;
+}
+
