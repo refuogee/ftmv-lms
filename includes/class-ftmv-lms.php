@@ -48,6 +48,15 @@ class ftmv_lms {
 	 */
 	protected $plugin_name;
 
+    /**
+	 * The unique identifier of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      string    $plugin_name    The string used to uniquely identify this plugin with underscores for certain situations.
+	 */
+	protected $plugin_name_underscore;
+
 	/**
 	 * The current version of the plugin.
 	 *
@@ -69,6 +78,7 @@ class ftmv_lms {
 	public function __construct() {
 
 		$this->plugin_name = 'ftmv-lms';
+        $this->plugin_name_underscore = 'ftmv_lms';
 		$this->version = '1.0.0';
 
 		$this->load_dependencies();
@@ -149,7 +159,7 @@ class ftmv_lms {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new ftmv_lms_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin = new ftmv_lms_Admin( $this->get_plugin_name(), $this->get_plugin_name_underscore(), $this->get_version() );
 
 		// Hook our settings page
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_settings_page' );
@@ -216,6 +226,10 @@ class ftmv_lms {
 	 */
 	public function get_plugin_name() {
 		return $this->plugin_name;
+	}
+
+    public function get_plugin_name_underscore() {
+		return $this->plugin_name_underscore;
 	}
 
 	/**

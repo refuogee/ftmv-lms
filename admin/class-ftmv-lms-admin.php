@@ -31,6 +31,14 @@ class ftmv_lms_Admin {
 	 */
 	private $plugin_name;
 
+    /* The ID of this plugin.
+    *
+    * @since    1.0.0
+    * @access   private
+    * @var      string    $plugin_name_underscore the name but with underscores for certain situations
+    */
+   private $plugin_name_underscore;
+
 	/**
 	 * The version of this plugin.
 	 *
@@ -50,6 +58,7 @@ class ftmv_lms_Admin {
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
+        $this->plugin_name_underscore = $plugin_name_underscore;
 		$this->version = $version;
 
 	}
@@ -73,7 +82,7 @@ class ftmv_lms_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/ftmv-lms-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . "css/{$this->plugin_name}-admin.css", array(), $this->version, 'all' );
 
 	}
 
@@ -96,7 +105,7 @@ class ftmv_lms_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/ftmv-lms-admin-scripts.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . "js/{$this->plugin_name}-admin-scripts.js", array( 'jquery' ), $this->version, true );
 
 	}
 
@@ -110,64 +119,64 @@ class ftmv_lms_Admin {
 
         add_menu_page(
             'FTMV LMS',
-            __( 'FTMV LMS', 'ftmv-lms-overview' ),            
+            __( 'FTMV LMS', "{$this->plugin_name}-overview" ),            
             'manage_options',
-            'ftmv-lms-overview',
+            "{$this->plugin_name}-overview",
             array( $this, 'display_admin_overview_screen'),
             'dashicons-forms',3
         );        
 
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Overview', 'ftmv-lms-overview' ),
-			__( 'Overview', 'ftmv-lms-overview' ),
+			"{$this->plugin_name}-overview",
+			__( 'Overview', "{$this->plugin_name}-overview" ),
+			__( 'Overview', "{$this->plugin_name}-overview" ),
 			'manage_options',
-			'ftmv-lms-overview',
+			"{$this->plugin_name}-overview",
 			array( $this, 'display_admin_overview_screen' )
 		);
 
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Programmes', 'ftmv-lms-programmes' ),
-			__( 'Programmes', 'ftmv-lms-programmes' ),
+			"{$this->plugin_name}-overview",
+			__( 'Programmes', "{$this->plugin_name}-programmes" ),
+			__( 'Programmes', "{$this->plugin_name}-programmes" ),
 			'manage_options',
-			'ftmv-lms-programmes',
+			"{$this->plugin_name}-programmes",
 			array( $this, 'display_programmes' )
 		);
 
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Add a Programme', 'ftmv-lms-add-programme' ),
-			__( 'Add a Programme', 'ftmv-lms-add-programme' ),
+			"{$this->plugin_name}-overview",
+			__( 'Add a Programme', "{$this->plugin_name}-add-programme" ),
+			__( 'Add a Programme', "{$this->plugin_name}-add-programme" ),
 			'manage_options',
-			'ftmv-lms-add-programme',
+			"{$this->plugin_name}-add-programme",
 			array( $this, 'display_add_programme' )
 		);
         
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Programme Details', 'ftmv-lms-programme-overview' ),
-			__( 'Programme Details', 'ftmv-lms-programme-overview' ),
+			"{$this->plugin_name}-overview",
+			__( 'Programme Details', "{$this->plugin_name}-programme-overview" ),
+			__( 'Programme Details', "{$this->plugin_name}-programme-overview" ),
 			'manage_options',
-			'ftmv-lms-programme-overview',
+			"{$this->plugin_name}-programme-overview",
 			array( $this, 'display_programme_overview' )
 		);
 
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Course Details', 'ftmv-lms-course-overview' ),
-			__( 'Course Details', 'ftmv-lms-course-overview' ),
+			"{$this->plugin_name}-overview",
+			__( 'Course Details', "{$this->plugin_name}-course-overview" ),
+			__( 'Course Details', "{$this->plugin_name}-course-overview" ),
 			'manage_options',
-			'ftmv-lms-course-overview',
+			"{$this->plugin_name}-course-overview",
 			array( $this, 'display_course_overview' )
 		);
 
         add_submenu_page(
-			'ftmv-lms-overview',
-			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
-			__( 'Add a Course Page', 'ftmv-lms-add-course' ),
+			"{$this->plugin_name}-overview",
+			__( 'Add a Course Page', "{$this->plugin_name}-add-course" ),
+			__( 'Add a Course Page', "{$this->plugin_name}-add-course" ),
 			'manage_options',
-			'ftmv-lms-add-course',
+			"{$this->plugin_name}-add-course",
 			array( $this, 'display_add_course' )
 		);
 
@@ -177,20 +186,20 @@ class ftmv_lms_Admin {
         global $plugin_page;
 
         $hidden_submenus = array(
-            'ftmv-lms-add-course' => true,
-            'ftmv-lms-course-overview' => true,
-            'ftmv-lms-programme-overview' => true,
-            'ftmv-lms-add-programme' => true
+            "{$this->plugin_name}-add-course" => true,
+            "{$this->plugin_name}-course-overview" => true,
+            "{$this->plugin_name}-programme-overview" => true,
+            "{$this->plugin_name}-add-programme" => true
         );
 
         // Select another submenu item to highlight (optional).
         if ( $plugin_page && isset( $hidden_submenus[ $plugin_page ] ) ) {
-            $submenu_file = 'ftmv-lms-overview';
+            $submenu_file = "{$this->plugin_name}-overview";
         }
 
         // Hide the submenu.
         foreach ( $hidden_submenus as $submenu => $unused ) {
-            remove_submenu_page( 'ftmv-lms-overview', $submenu );
+            remove_submenu_page( "{$this->plugin_name}-overview", $submenu );
         }
 
         return $submenu_file;
@@ -204,43 +213,43 @@ class ftmv_lms_Admin {
 
     public function display_add_course() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-course.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-add-course.php";
 
 	}
 
     public function display_course_overview() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-course-overview.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-course-overview.php";
 
 	}
     
     public function display_programme_overview() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-programme-overview.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-programme-overview.php";
 
 	}
 
     public function display_add_programme() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-add-programme.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-add-programme.php";
 
 	}    
 
     public function display_admin_overview_screen() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-admin-overview.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-admin-overview.php";
 
 	}    
 
     public function display_programmes() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-programmes.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-programmes.php";
 
 	}
 
     public function display_general_settings_page() {
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/ftmv-lms-admin-display.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-admin-display.php";
 
 	}
 
@@ -342,8 +351,7 @@ class ftmv_lms_Admin {
 
                 $programme_result = $wpdb->get_results( $programme_query, ARRAY_A );
 
-                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) ); 
-                 
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) );                  
 
             } else {
                 exit;
@@ -351,14 +359,58 @@ class ftmv_lms_Admin {
         }
     } 
 
-    function create_programme_student_role () 
+    function create_programme ($user_id, $new_top_level_programme) 
     {
-
+        date_default_timezone_set('Africa/Johannesburg');
+        $time_stamp = date("Y-m-d H:i:s");
+        
+        global $wpdb;
+        $table = $wpdb->prefix.'ftmv_lms_main_programme_table';
+        
+        $data = array('name' => $new_top_level_programme, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
+        
+        $format = array('%s', '%s', '%d');
+        
+        $wpdb->insert($table,$data,$format);
+        $programme_id = $wpdb->insert_id;
+        
+        return $programme_id;
     }
 
-    function create_programme_facilitator_role () 
-    {
+    function create_programme_student_role($programme_id, $new_top_level_programme) 
+    {   
+        
+        $role_slug = $this->plugin_name . '-programme-id-[' . $programme_id . ']-student';
+        $role_capability = 'can-view-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
+        $role_display_name = $new_top_level_programme . ' student';
 
+        $returned_role_object = add_role(
+            $role_slug,
+            __( $role_display_name  ),
+            array(
+                $role_capability  => true
+            )
+        );
+
+        error_log( print_r($returned_role_object, true) );
+    }
+
+    function create_programme_facilitator_role($programme_id, $new_top_level_programme) 
+    {
+        $role_slug = $this->plugin_name . '-programme-id-[' . $programme_id . ']-facilitator';
+        $role_capability = 'can-view-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
+        $role_capability = 'can-facilitate-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
+        $role_display_name = $new_top_level_programme . ' facilitator';
+
+        $returned_role_object = add_role(
+            $role_slug,
+            __( $role_display_name  ),
+            array(
+                $role_capability  => true
+            )
+        );
+
+        error_log( print_r($returned_role_object, true) );
     }
 
     public function add_top_level_programme () {
@@ -369,17 +421,11 @@ class ftmv_lms_Admin {
             if(wp_verify_nonce($_POST['ftmv_add_programme_nonce'], 'ftmv_add_programme_nonce')) {
                 
                 $new_top_level_programme = sanitize_text_field( $_POST['programme-name'] );
-                date_default_timezone_set('Africa/Johannesburg');
-                $time_stamp = date("Y-m-d H:i:s");
                 
-                global $wpdb;
-                $table = $wpdb->prefix.'ftmv_lms_main_programme_table';
-                
-                $data = array('name' => $new_top_level_programme, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
-                
-                $format = array('%s', '%s', '%d');
-                
-                $wpdb->insert($table,$data,$format);
+                $programme_id = $this->create_programme($user_id, $new_top_level_programme);               
+
+                $this->create_programme_student_role($programme_id, $new_top_level_programme);               
+                $this->create_programme_facilitator_role($programme_id, $new_top_level_programme);               
 
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programmes") );
                  

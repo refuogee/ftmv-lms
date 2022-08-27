@@ -120,8 +120,8 @@
             
             public function column_name( $item)
             {
-                error_log( print_r($item, true));
-                error_log( $item['id'] );
+                /* error_log( print_r($item, true));
+                error_log( $item['id'] ); */
                 $edit_link = admin_url( 'admin.php?page=ftmv-lms-programme-overview&id=' .  $item['id']  );
                 $view_link = get_permalink( $item['name'] ); 
                 $output    = '';

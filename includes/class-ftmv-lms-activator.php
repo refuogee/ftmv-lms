@@ -34,9 +34,6 @@ class ftmv_lms_Activator {
         
         global $wpdb;
 
-        
-        
-
         $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
         $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
         $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
