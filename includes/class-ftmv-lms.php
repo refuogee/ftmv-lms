@@ -53,7 +53,7 @@ class ftmv_lms {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin with underscores for certain situations.
+	 * @var      string    $plugin_name_underscore      The string used to uniquely identify this plugin with underscores for certain situations.
 	 */
 	protected $plugin_name_underscore;
 
@@ -77,7 +77,7 @@ class ftmv_lms {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'ftmv-lms';
+		$this->plugin_name = 'ftmv-lms';        
         $this->plugin_name_underscore = 'ftmv_lms';
 		$this->version = '1.0.0';
 
@@ -122,6 +122,7 @@ class ftmv_lms {
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-ftmv-lms-admin.php';
+        
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -158,23 +159,27 @@ class ftmv_lms {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
+        
 		$plugin_admin = new ftmv_lms_Admin( $this->get_plugin_name(), $this->get_plugin_name_underscore(), $this->get_version() );
 
 		// Hook our settings page
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'register_settings_page' );
 
 		// Hook our settings
-		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
+		// $this->loader->add_action( 'admin_init', $plugin_admin, 'register_settings' );
 
         // Hide SubMenu Pages that don't need menu links
         $this->loader->add_filter( 'submenu_file', $plugin_admin, 'hide_pages' );
 
         // Hooks for form submits
-        $this->loader->add_action( 'admin_post_ftmv_add_programme', $plugin_admin, 'add_top_level_programme');
+        $this->loader->add_action( 'admin_post_ftmv_add_programme', $plugin_admin, 'add_programme');
         $this->loader->add_action( 'admin_post_ftmv_add_course', $plugin_admin, 'add_course');
+
         $this->loader->add_action( 'admin_post_ftmv_edit_programme', $plugin_admin, 'edit_programme');
         $this->loader->add_action( 'admin_post_ftmv_edit_course', $plugin_admin, 'edit_course');
+
+        $this->loader->add_action( 'admin_post_ftmv_delete_programme', $plugin_admin, 'delete_programme');
+        $this->loader->add_action( 'admin_post_ftmv_delete_course', $plugin_admin, 'delete_course');
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -230,6 +235,7 @@ class ftmv_lms {
 
     public function get_plugin_name_underscore() {
 		return $this->plugin_name_underscore;
+        
 	}
 
 	/**

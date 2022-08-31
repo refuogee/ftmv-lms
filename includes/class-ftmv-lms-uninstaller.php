@@ -48,12 +48,14 @@ class ftmv_lms_Uninstaller {
         $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
         $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
         $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
+        $roles_table_name = $wpdb->prefix . 'ftmv_lms_roles_table';
 
         $tableArray = [   
                         $main_programme_table_name,
                         $course_table_name,
                         $facilitator_table_name,
-                        $student_table_name
+                        $student_table_name,
+                        $roles_table_name
                     ];
 
       foreach ($tableArray as $tablename) {

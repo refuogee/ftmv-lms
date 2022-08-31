@@ -55,14 +55,21 @@ class ftmv_lms_Admin {
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $plugin_name_underscore, $version ) {
 
 		$this->plugin_name = $plugin_name;
         $this->plugin_name_underscore = $plugin_name_underscore;
 		$this->version = $version;
+        $this->load_dependencies();
+	}
+    private function load_dependencies() {
+
+		/** 
+		* The class responsible for defining all actions that occur in the admin area.
+		*/
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/ftmv-lms-admin-helpers.php';
 
 	}
-
 	/**
 	 * Register the stylesheets for the admin area.
 	 *
@@ -325,8 +332,6 @@ class ftmv_lms_Admin {
         if(isset($_POST['ftmv_add_course_nonce'])) {
             
             if(wp_verify_nonce($_POST['ftmv_add_course_nonce'], 'ftmv_add_course_nonce')) {
-
-                echo 'nonce verified';
                 
                 $new_course = sanitize_text_field( $_POST['course-name'] );
                 $programme_id = sanitize_text_field( $_POST['programme-id'] );
@@ -359,61 +364,7 @@ class ftmv_lms_Admin {
         }
     } 
 
-    function create_programme ($user_id, $new_top_level_programme) 
-    {
-        date_default_timezone_set('Africa/Johannesburg');
-        $time_stamp = date("Y-m-d H:i:s");
-        
-        global $wpdb;
-        $table = $wpdb->prefix.'ftmv_lms_main_programme_table';
-        
-        $data = array('name' => $new_top_level_programme, 'timecreated' => $time_stamp, 'created_user_id' => $user_id);
-        
-        $format = array('%s', '%s', '%d');
-        
-        $wpdb->insert($table,$data,$format);
-        $programme_id = $wpdb->insert_id;
-        
-        return $programme_id;
-    }
-
-    function create_programme_student_role($programme_id, $new_top_level_programme) 
-    {   
-        
-        $role_slug = $this->plugin_name . '-programme-id-[' . $programme_id . ']-student';
-        $role_capability = 'can-view-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
-        $role_display_name = $new_top_level_programme . ' student';
-
-        $returned_role_object = add_role(
-            $role_slug,
-            __( $role_display_name  ),
-            array(
-                $role_capability  => true
-            )
-        );
-
-        error_log( print_r($returned_role_object, true) );
-    }
-
-    function create_programme_facilitator_role($programme_id, $new_top_level_programme) 
-    {
-        $role_slug = $this->plugin_name . '-programme-id-[' . $programme_id . ']-facilitator';
-        $role_capability = 'can-view-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
-        $role_capability = 'can-facilitate-' . $this->plugin_name . '-programme-id-[' . $programme_id . ']';
-        $role_display_name = $new_top_level_programme . ' facilitator';
-
-        $returned_role_object = add_role(
-            $role_slug,
-            __( $role_display_name  ),
-            array(
-                $role_capability  => true
-            )
-        );
-
-        error_log( print_r($returned_role_object, true) );
-    }
-
-    public function add_top_level_programme () {
+    public function add_programme () {
         
         $user_id = wp_get_current_user()->ID;
 
@@ -422,15 +373,54 @@ class ftmv_lms_Admin {
                 
                 $new_top_level_programme = sanitize_text_field( $_POST['programme-name'] );
                 
-                $programme_id = $this->create_programme($user_id, $new_top_level_programme);               
+                $programme_id = create_programme($user_id, $new_top_level_programme);               
 
-                $this->create_programme_student_role($programme_id, $new_top_level_programme);               
-                $this->create_programme_facilitator_role($programme_id, $new_top_level_programme);               
+                create_programme_student_role($this->plugin_name, $programme_id, $new_top_level_programme);               
+                create_programme_facilitator_role($this->plugin_name, $programme_id, $new_top_level_programme);               
 
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programmes") );
                  
 
             } else {
+                exit;
+            }
+        }
+    }
+
+    public function delete_course () {        
+        
+        $user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_delete_course_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_delete_course_nonce'], 'ftmv_delete_course_nonce')) {
+
+                $course_id = sanitize_text_field( $_GET['course-id'] );
+                $programme_id = sanitize_text_field( $_GET['programme-id'] );                
+                handle_course_deletion($programme_id, $course_id, $this->plugin_name_underscore);
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id={$programme_id}" ) );
+            } else {
+                error_log('nonce NOT verified');
+                exit;
+            }
+        }
+    }
+
+    
+
+    public function delete_programme () {        
+        
+        $user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_delete_programme_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_delete_programme_nonce'], 'ftmv_delete_programme_nonce')) {
+                   
+                $programme_id = sanitize_text_field( $_GET['programme-id'] );
+                handle_programme_deletion($programme_id, $this->plugin_name_underscore);
+                wp_redirect( admin_url("/admin.php?page=ftmv-lms-programmes") );
+            } else {
+                error_log('nonce NOT verified');
                 exit;
             }
         }
@@ -479,7 +469,7 @@ class ftmv_lms_Admin {
                 // echo 'nonce verified';
                 if (isset($_POST['course-name']) && strlen($_POST['course-name']) > 0 )
                 {
-                    $new_course_name = sanitize_text_field( $_POST['course-name'] );
+                    $new_course_name = strtolower(sanitize_text_field( $_POST['course-name'] ));
                     $update_name = true;
                 }
 

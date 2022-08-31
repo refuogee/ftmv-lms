@@ -29,9 +29,7 @@ $result = $wpdb->get_results( $query, ARRAY_A );
         This is where you create a course. <br>
         Once a course is created the ability to create and add students to the course will become available.
     </p>            
-    
     <hr>
-    <div class="notice notice-success is-dismissible"><p>Poop</p></div>
     <form class="ftmv-lms-course-details-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_course">
             <input type="hidden" name="action" value="ftmv_add_course">
             <input type="hidden" name="ftmv_add_course_nonce" value="<?php echo esc_attr($ftmv_add_course_nonce) ?>" />			    			

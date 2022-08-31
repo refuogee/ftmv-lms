@@ -131,8 +131,7 @@
         
                 // Get actions.
                 $actions = array(
-                    'edit'   => '<a href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>',
-                    'delete'   => '<a href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>',
+                    'edit'   => '<a href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>'                    
                 );
         
                 $row_actions = array();

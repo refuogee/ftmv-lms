@@ -19,6 +19,7 @@ $progamme_id = $_GET['id'];
 // $url_components = parse_url($url);
 
 $ftmv_edit_programme_nonce = wp_create_nonce('ftmv_edit_programme_nonce');
+$ftmv_delete_programme_nonce = wp_create_nonce('ftmv_delete_programme_nonce');
 
 global $wpdb;
 
@@ -158,8 +159,10 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         
                 // Get actions.
                 $actions = array(
-                    'edit'   => '<a target="_blank" href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>',
-                    'delete'   => '<a target="_blank" href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>',
+                    'edit'   => '<a target="_blank" href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>'
+                    // This is for the links that appear below the content - commented out because I don't want users to delete from this screen.
+                    /* 'delete'   => '<a href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>', */
+                    
                 );
         
                 $row_actions = array();
@@ -278,17 +281,32 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             </div>
         </div>
 
-
         <div class="ftmv-lms-form-button-container">            
-            <div class="ftmv-lms-form-save-delete-button-container">
-                <button type="submit" class="button button-primary">Save Changes</button>            
-                <button type="button" class="button button-primary delete-btn">Delete Programme</button>            
+            <div class="ftmv-lms-form-save-button-container">
+                <button name="action-type" value="edit" type="submit" class="button button-primary">Save Changes</button>            
             </div>
-            <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-programmes')) ?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>
-            
+        </div>  
+
+    </form>
+
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_delete_programme" class="ftmv-lms-delete-programme-form">        
+        <input type="hidden" name="action" value="ftmv_delete_programme">  
+		<input type="hidden" name="ftmv_delete_programme_nonce" value="<?php echo $ftmv_delete_programme_nonce ?>" />			    			  
+        
+        <!-- ftmv-lms-form-layout-container -->
+        <div class="ftmv-lms-form-delete-button-container">
+            <button name="action-type" value="delete" type="submit" class="button button-primary delete-btn">Delete Programme</button>                        
         </div>
     </form>
+    
     <hr>
+    
+    <div class="ftmv-lms-back-button-container">            
+        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-programmes')) ?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>
+    </div>
+    
+    <hr>
+
     <div class="programme-courses-table">
         <h3>Course List:</h3>    
         <p>            

@@ -22,4 +22,36 @@
         });
     }
 
+    /*
+        Logic for confirmation of programme deletion
+    */
+    if (document.getElementById("ftmv_delete_programme"))
+    {
+        let programmeDeleteForm = document.getElementById("ftmv_delete_programme");    
+        programmeDeleteForm.addEventListener("submit", function(event) 
+        {   
+            event.preventDefault();
+            if (confirm("Are you sure you want to delete this programme? \n\nDeleting a programme will delete all students and facilitators associated with the programme")) {            
+                programmeDeleteForm.submit();
+            }           
+        });    
+    }
+    
+
+    /*
+        Logic for confirmation of course deletion
+    */
+    if (document.getElementById("ftmv_delete_course"))
+    {
+        let courseDeleteForm = document.getElementById("ftmv_delete_course");
+    
+        courseDeleteForm.addEventListener("submit", function(event) 
+        {   
+            event.preventDefault();
+            if (confirm("Are you sure you want to delete this course?")) {            
+                courseDeleteForm.submit();
+            }           
+        });
+    }
+
 })();

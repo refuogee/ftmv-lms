@@ -107,10 +107,16 @@ tfoot tr .manage-column {
     width: 100%;
 }
 
-.ftmv-lms-form-button-container {
-    display: flex;
-    flex-direction: column;
-    gap : 4rem;
+
+.ftmv-lms-form-button-container {    
     margin-top: 4rem;
+}
+
+.ftmv-lms-form-delete-button-container {
+    margin: 2rem 0;
+}
+
+.ftmv-lms-back-button-container {
+    margin: 2rem 0;
 }
 

@@ -39,6 +39,8 @@ class ftmv_lms_Activator {
         $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
         $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
 
+        $roles_table_name = $wpdb->prefix . 'ftmv_lms_roles_table';
+
         $charset_collate = $wpdb->get_charset_collate();
 
         
@@ -85,6 +87,16 @@ class ftmv_lms_Activator {
             accepted_terms int NOT NULL,            
             PRIMARY KEY  (id)
             ) $charset_collate;";
+
+        $roles_table_sql = "CREATE TABLE $roles_table_name (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,            
+            main_programme_id mediumint(9) NOT NULL,            
+            role_name varchar(191) NOT NULL,            
+            role_type varchar(191) NOT NULL,            
+            role_display_name varchar(191) NOT NULL,            
+            role_capabilities longtext NOT NULL,            
+            PRIMARY KEY  (id)
+            ) $charset_collate;";
         
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
@@ -92,6 +104,8 @@ class ftmv_lms_Activator {
         dbDelta( $course_table_sql );
         dbDelta( $facilitator_table_sql );
         dbDelta( $student_table_sql );
+        dbDelta( $roles_table_sql );
+        
 	}
 
 }

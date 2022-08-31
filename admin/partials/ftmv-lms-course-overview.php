@@ -19,6 +19,7 @@ $course_id = $_GET['course-id'];
 global $wpdb;
 
 $ftmv_edit_course_nonce = wp_create_nonce('ftmv_edit_course_nonce');
+$ftmv_delete_course_nonce = wp_create_nonce('ftmv_delete_course_nonce');
 
 // error_log(gettype($arg));
 // error_log()
@@ -318,14 +319,30 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             </div>
         </div>
 
-        <div class="ftmv-lms-form-button-container">
-            <div class="ftmv-lms-form-save-delete-button-container">
+        <div class="ftmv-lms-form-button-container">            
+            <div class="ftmv-lms-form-save-button-container">
                 <button type="submit" class="button button-primary">Save Changes</button>            
-                <button type="button" class="button button-primary delete-btn">Delete Course</button>            
             </div>
-            <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' . esc_attr($results[0]['programme_id'])) ?>"><button type="button" class="button button-primary">Back to Programme Overview</button></a>
+        </div>
+    </form> 
+    
+
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. $course_id .'&programme-id='.esc_attr($results[0]['programme_id']).'' ) ); ?>" method="post" id="ftmv_delete_course" class="ftmv-lms-delete-course-form">        
+        <input type="hidden" name="action" value="ftmv_delete_course">  
+		<input type="hidden" name="ftmv_delete_course_nonce" value="<?php echo $ftmv_delete_course_nonce ?>" />			    			  
+        
+        <!-- ftmv-lms-form-layout-container -->
+        <div class="ftmv-lms-form-delete-button-container">            
+            <button type="submit" class="button button-primary delete-btn">Delete Course</button>            
         </div>
     </form>
+
+    <hr>
+    <div class="ftmv-lms-back-button-container">            
+        <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id=' . esc_attr($results[0]['programme_id'])) ?>"><button type="button" class="button button-primary">Back to Programme Overview</button></a>
+    </div>
+            
+    
     <hr>
     <div class="programme-courses-table">
         <h3>Student List:</h3>    
