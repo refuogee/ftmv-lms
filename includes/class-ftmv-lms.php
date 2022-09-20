@@ -84,7 +84,7 @@ class ftmv_lms {
 		$this->load_dependencies();
 		//$this->set_locale();
 		$this->define_admin_hooks();
-		$this->define_public_hooks();
+		/* $this->define_public_hooks(); */
 
 	}
 
@@ -173,10 +173,12 @@ class ftmv_lms {
 
         // Hooks for form submits
         $this->loader->add_action( 'admin_post_ftmv_add_programme', $plugin_admin, 'add_programme');
-        $this->loader->add_action( 'admin_post_ftmv_add_course', $plugin_admin, 'add_course');
-
         $this->loader->add_action( 'admin_post_ftmv_edit_programme', $plugin_admin, 'edit_programme');
+        
+        $this->loader->add_action( 'admin_post_ftmv_add_course', $plugin_admin, 'add_course');        
         $this->loader->add_action( 'admin_post_ftmv_edit_course', $plugin_admin, 'edit_course');
+
+        $this->loader->add_action( 'admin_post_ftmv_add_user', $plugin_admin, 'add_user');        
 
         $this->loader->add_action( 'admin_post_ftmv_delete_programme', $plugin_admin, 'delete_programme');
         $this->loader->add_action( 'admin_post_ftmv_delete_course', $plugin_admin, 'delete_course');
@@ -193,7 +195,7 @@ class ftmv_lms {
 	 * @since    1.0.0
 	 * @access   private
 	 */
-	private function define_public_hooks() {
+	/* private function define_public_hooks() {
 
 		// $plugin_public = new Toptal_Save_Public( $this->get_plugin_name(), $this->get_version() );
 
@@ -211,7 +213,7 @@ class ftmv_lms {
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
-	}
+	} */
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

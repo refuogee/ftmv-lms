@@ -36,8 +36,8 @@ class ftmv_lms_Activator {
 
         $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
         $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
-        $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
-        $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
+
+        $user_table_name = $wpdb->prefix . 'ftmv_lms_user_table';
 
         $roles_table_name = $wpdb->prefix . 'ftmv_lms_roles_table';
 
@@ -67,26 +67,17 @@ class ftmv_lms_Activator {
             PRIMARY KEY  (id)
             ) $charset_collate;";
 
-        $facilitator_table_sql = "CREATE TABLE $facilitator_table_name (
+        $user_table_sql = "CREATE TABLE $user_table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,
             wp_user_id mediumint(9) NOT NULL,
             timecreated datetime DEFAULT '0000-00-00' NOT NULL,                        
             created_user_id mediumint(9) NOT NULL,
-            main_programme_id mediumint(9) NOT NULL,            
+            main_programme_id mediumint(9) NOT NULL,                        
+            assigned_role_id mediumint(9) NOT NULL,                        
+            course_id mediumint(9) NOT NULL,                        
             PRIMARY KEY  (id)
             ) $charset_collate;";
-
-        $student_table_sql = "CREATE TABLE $student_table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            wp_user_id mediumint(9) NOT NULL,
-            timecreated datetime DEFAULT '0000-00-00' NOT NULL,                        
-            created_user_id mediumint(9) NOT NULL,
-            main_programme_id mediumint(9) NOT NULL,            
-            course_id mediumint(9) NOT NULL,            
-            reset_password_count int NOT NULL,            
-            accepted_terms int NOT NULL,            
-            PRIMARY KEY  (id)
-            ) $charset_collate;";
+        
 
         $roles_table_sql = "CREATE TABLE $roles_table_name (
             id mediumint(9) NOT NULL AUTO_INCREMENT,            
@@ -102,8 +93,7 @@ class ftmv_lms_Activator {
 
         dbDelta( $main_programme_table_sql );
         dbDelta( $course_table_sql );
-        dbDelta( $facilitator_table_sql );
-        dbDelta( $student_table_sql );
+        dbDelta( $user_table_sql );
         dbDelta( $roles_table_sql );
         
 	}

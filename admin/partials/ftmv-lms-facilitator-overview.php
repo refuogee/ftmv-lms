@@ -14,10 +14,7 @@
 
 
 
-$programme_id = $_GET['programme-id'];
-error_log($programme_id);
 $course_id = $_GET['course-id'];
-$user_type = 'student';
 
 global $wpdb;
 
@@ -29,7 +26,6 @@ $ftmv_delete_course_nonce = wp_create_nonce('ftmv_delete_course_nonce');
 
 // $query = "SELECT course_info.id, course_info.timecreated, course_info.name, course_info.startdate, course_info.enddate, course_info.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON course_info.created_user_id = user_info.ID WHERE course_info.id =".$course_id."";
 $query = "SELECT course_info.main_programme_id AS programme_id, course_info.id, course_info.timecreated, course_info.name, course_info.startdate, course_info.enddate, course_info.student_count, user_info.display_name AS 'created_user', programme_info.name AS 'main_programme' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON course_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON course_info.main_programme_id = programme_info.id WHERE course_info.id =".$course_id. " AND programme_info.id = course_info.main_programme_id";
-
 
 
 
@@ -88,10 +84,12 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 $columns = array(
                     'id'                => 'ID',
-                    'user_name'         => 'Student Name',
-                    'user_email'        => 'Email',
-                    'created_user'      => 'Student Created By',                    
-                    'role_display_name'      => 'Student Role',                    
+                    'name'              => 'Course Name',
+                    'startdate'         => 'Start Date',
+                    'enddate'           => 'End Date',
+                    'created_user'      => 'Course Created By',
+                    'timecreated'       => 'Date Created',
+                    'student_count'     => 'Students'
                 );
         
                 return $columns;
@@ -129,25 +127,19 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id `WHERE` first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
 
                 // $query = "SELECT course.id, course.timecreated, course.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.created_user_id = user_info.ID" ;
+                /* $progamme_id = $_GET['id'];
+                $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $progamme_id;
                 
-                $course_id = $_GET['course-id'];
+                $results = $wpdb->get_results( $query, ARRAY_A );
                 
-                // $student_table_query = "SELECT user.id, user.wp_user_id, user.timecreated, role.role_display_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS user_name FROM wp_ftmv_lms_user_table AS user LEFT JOIN wp_usermeta AS wp_user_name ON user.wp_user_id = wp_user_name.user_id  LEFT JOIN wp_usermeta AS wp_user_surname ON user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = user.wp_user_id AND user.course_id = '{$course_id}';";
-                $student_table_query = "SELECT user.id, user.wp_user_id, wp_user.user_email AS user_email, user.timecreated, role.role_display_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS user_name FROM wp_ftmv_lms_user_table AS user LEFT JOIN wp_users AS wp_user ON user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name ON user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = user.wp_user_id AND user.course_id = '{$course_id}';";
-                
-                $results = $wpdb->get_results( $student_table_query, ARRAY_A );
-                    
-                /*
                 foreach ($results as $key => $result) {
                     $start_date = strtotime($result['startdate']);                    
                     $end_date = strtotime($result['enddate']);                    
                     $results[$key]['startdate'] = date('d/M/Y', $start_date); 
                     $results[$key]['enddate'] = date('d/M/Y', $end_date); 
                 }
-                */
                 
-                
-                return $results; 
+                return $results;  */
             }
         
             /**
@@ -192,10 +184,13 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 switch( $column_name ) {
                     case 'id': 
-                    case 'user_name':                    
-                    case 'user_email':                    
+                    case 'timecreated':
+                    case 'name': 
                     case 'created_user':
-                    case 'role_display_name':
+                    case 'main_programme_id':
+                    case 'startdate':
+                    case 'enddate':
+                    case 'student_count':
                         return $item[ $column_name ];
                     default:
                         return print_r( $item, true ) ;
@@ -244,21 +239,6 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
 <div id="wrap">
-    <?php
-        $transient_message = get_transient( 'user_creation_form_transient' );              
-        if( ! empty( $transient_message ) ) 
-        {   
-            if ($transient_message['user_id'] == wp_get_current_user()->ID)
-            {                        
-                if ($transient_message['message_type'] =='success' )
-                {
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
-                }
-                
-            } 
-            
-        }
-    ?>
     <h2>Course Details:</h2>    
     <p>
         On this page you can see the details for a specific course as well as the students that are linked to this course. <br> 
@@ -269,7 +249,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         <p>            
             You can edit the course name here or delete the course entirely.<br>
     </p>    
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. esc_attr($results[0]['id']) .'' ) ); ?>" method="post" id="ftmv_edit_course" class="ftmv-lms-details-form">        
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?course-id='. esc_attr($results[0]['id']) .'' ) ); ?>" method="post" id="ftmv_edit_course" class="ftmv-lms-programme-details-form">        
         <input type="hidden" name="action" value="ftmv_edit_course">  
 		<input type="hidden" name="ftmv_edit_course_nonce" value="<?php echo $ftmv_edit_course_nonce ?>" />			    			  
         
@@ -364,7 +344,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
     
     <hr>
-    <div class="programme-courses-table">        
+    <div class="programme-courses-table">
         <h3>Student List:</h3>    
         <p>            
             This is a list of all the students who have been created and added to this course. <br>
@@ -372,11 +352,11 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             To delete click delete. <br>
         </p>
         <?php
-            $table = new List_Table();
+           /*  $table = new List_Table();
             $table->prepare_items();
-            $table->display();           
+            $table->display();      */      
         ?>
-    </div>    
-    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-user&course-id=' . esc_attr($course_id)) . '&programme-id='. $programme_id . '&user-type='. esc_attr($user_type) ?>"> <button type="button" class="button button-primary">Add New Student</button></a>
+    </div>
+    <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-course&id=' . esc_attr($result[0]['id'])) . '' ?>"> <button type="button" class="button button-primary">Add New Student</button></a>
 
 </div>

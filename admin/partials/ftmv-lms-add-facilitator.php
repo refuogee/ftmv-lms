@@ -30,7 +30,7 @@ $result = $wpdb->get_results( $query, ARRAY_A );
         Once a course is created the ability to create and add students to the course will become available.
     </p>            
     <hr>
-    <form class="ftmv-lms-details-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_course">
+    <form class="ftmv-lms-course-details-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_add_course">
             <input type="hidden" name="action" value="ftmv_add_course">
             <input type="hidden" name="ftmv_add_course_nonce" value="<?php echo esc_attr($ftmv_add_course_nonce) ?>" />			    			
             <div class="wrap-test">        
@@ -49,7 +49,7 @@ $result = $wpdb->get_results( $query, ARRAY_A );
                         <label for="course-name">Course Name:</label>
                     </div>
                     <div class="ftmv-lms-input-container">
-                        <input type="text" name="course-name" id="course-name" class="regular-text" autofocus required />            
+                        <input type="text" name="course-name" id="course-name" class="regular-text" required />            
                     </div>
                 </div>
 

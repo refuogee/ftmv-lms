@@ -13,11 +13,7 @@
  */
 
 
-// $arg = get_query_var('id');
-// $arg = $_GET['id'];
 $progamme_id = $_GET['id'];
-// $url_components = parse_url($url);
-
 $ftmv_edit_programme_nonce = wp_create_nonce('ftmv_edit_programme_nonce');
 $ftmv_delete_programme_nonce = wp_create_nonce('ftmv_delete_programme_nonce');
 
@@ -148,9 +144,10 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
             public function column_name( $item)
             {
+                $progamme_id = $_GET['id'];
                 /* error_log( print_r($item, true));
                 error_log( $item['id'] ); */
-                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id']  );
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id'] . '&programme-id=' . $progamme_id);
                 $view_link = get_permalink( $item['name'] ); 
                 $output    = '';
         
@@ -246,7 +243,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             You can edit the programme name here or delete the programme entirely.<br>
     </p>   
     
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-programme-details-form">        
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-details-form">        
         <input type="hidden" name="action" value="ftmv_edit_programme">  
 		<input type="hidden" name="ftmv_edit_programme_nonce" value="<?php echo $ftmv_edit_programme_nonce ?>" />			    			  
         
@@ -308,6 +305,17 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
     <hr>
 
     <div class="programme-courses-table">
+        <?php
+            $transient_message = get_transient( 'course_creation_form_message_transient' );              
+            if( ! empty( $transient_message ) ) 
+            {   
+                if ($transient_message['user_id'] == wp_get_current_user()->ID)
+                {                        
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
+                } 
+                
+            }
+        ?>
         <h3>Course List:</h3>    
         <p>            
             This is a list of all the courses associated with the program and the dates they are scheduled for. <br>            

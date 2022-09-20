@@ -180,11 +180,20 @@ class ftmv_lms_Admin {
 
         add_submenu_page(
 			"{$this->plugin_name}-overview",
-			__( 'Add a Course Page', "{$this->plugin_name}-add-course" ),
-			__( 'Add a Course Page', "{$this->plugin_name}-add-course" ),
+			__( 'Add a Course', "{$this->plugin_name}-add-course" ),
+			__( 'Add a Course', "{$this->plugin_name}-add-course" ),
 			'manage_options',
 			"{$this->plugin_name}-add-course",
 			array( $this, 'display_add_course' )
+		);
+
+        add_submenu_page(
+			"{$this->plugin_name}-overview",
+			__( 'Add User', "{$this->plugin_name}-add-user" ),
+			__( 'Add User', "{$this->plugin_name}-add-user" ),
+			'manage_options',
+			"{$this->plugin_name}-add-user",
+			array( $this, 'display_add_user' )
 		);
 
 	}
@@ -217,6 +226,11 @@ class ftmv_lms_Admin {
 	 *
 	 * @since    1.0.0
 	 */
+    public function display_add_user() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-add-user.php";
+
+	}
 
     public function display_add_course() {
 
@@ -284,7 +298,7 @@ class ftmv_lms_Admin {
         //echo '<div><p>Test</p></div>';
 		add_settings_section(
 			$this->plugin_name . '-settings-section',
-			__( get_option('ftmv-lms-settings')['institution-name'] . ' Settings', 'ftmv-lms' ),
+			__( get_option("{$plugin_name}-settings")['institution-name'] . ' Settings', "{$plugin_name}" ),
 			array( $this, 'sandbox_add_settings_section' ),
 			$this->plugin_name . '-settings'
 		);
@@ -325,6 +339,44 @@ class ftmv_lms_Admin {
 
 	}
 
+
+    public function add_user () {
+        
+        $created_user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_add_user_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_add_user_nonce'], 'ftmv_add_user_nonce')) {
+
+                $course_id = sanitize_text_field( $_POST['course-id'] );
+                $programme_id = sanitize_text_field( $_POST['programme-id'] );
+                $user_type = sanitize_text_field( $_POST['user-type'] );
+                $user_name = sanitize_text_field( $_POST['user-name'] );
+                $user_surname = sanitize_text_field( $_POST['user-surname'] );
+                $user_email = sanitize_email( $_POST['user-email'] );
+                $form_url = sanitize_url( $_POST['current-url'] );
+                
+                manage_user_creation($created_user_id, $user_type, $course_id, $programme_id, $user_name, $user_surname, $user_email);
+                
+                $transient_message = get_transient( 'user_creation_form_transient' );              
+                if ($transient_message['message_type'] =='success' )
+                {
+                    wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id={$course_id}&programme-id={$programme_id}") );
+                }                         
+                else 
+                {
+                    wp_redirect( $form_url );
+                }
+                
+                
+                // wp_redirect( $form_url );
+
+            } else {
+                exit;
+            }
+        }
+    }
+    
     public function add_course () {
         
         $user_id = wp_get_current_user()->ID;
@@ -336,7 +388,7 @@ class ftmv_lms_Admin {
                 $new_course = sanitize_text_field( $_POST['course-name'] );
                 $programme_id = sanitize_text_field( $_POST['programme-id'] );
 
-                date_default_timezone_set('Africa/Johannesburg');
+                // date_default_timezone_set('Africa/Johannesburg');
 
                 $time_stamp = date("Y-m-d H:i:s"); 
                 $start_date = sanitize_text_field( $_POST['course-start-date'] );
@@ -355,6 +407,10 @@ class ftmv_lms_Admin {
                 $programme_query = "UPDATE {$programme_table} SET course_count = course_count + 1 WHERE id = {$programme_id}";
 
                 $programme_result = $wpdb->get_results( $programme_query, ARRAY_A );
+                
+                $current_user_id = wp_get_current_user()->ID;
+                $course_success_details = array('user_id' => $current_user_id, 'message' => 'Course Created Successfully');
+                set_transient( 'course_creation_form_message_transient', $course_success_details, 60 );
 
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id=" . $programme_id) );                  
 

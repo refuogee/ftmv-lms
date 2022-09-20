@@ -28,7 +28,7 @@ $ftmv_add_programme_nonce = wp_create_nonce('ftmv_add_programme_nonce');
                 This is where you create a top level programme. <br>
                 Once a top level programme is created the ability to create or add a facilitator to that programme, create courses that run during specific dates and add students to courses will become available.
             </p>            
-            <input type="text" name="programme-name" id="programme-name" class="regular-text" />            
+            <input type="text" name="programme-name" id="programme-name" class="regular-text" autofocus required/>            
             <button type="submit" class="button button-primary">Add programme</button>            
             <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programmes'); ?>"><button type="button" class="button button-primary">Cancel</button></a>
         </div>

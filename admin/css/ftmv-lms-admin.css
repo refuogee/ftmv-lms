@@ -40,14 +40,20 @@ label {
     margin-top : 1rem;
 }
 
-.ftmv-lms-course-details-form, .ftmv-lms-programme-details-form {
+.ftmv-lms-details-form {
  
     padding: 0rem 0rem 2rem 0rem;
     width: 30%;
 }
 
+@media only screen and (max-width: 1440px) {
+     .ftmv-lms-details-form {
+         width: 60%;
+     }
+    }
+
 @media only screen and (max-width: 1024px) {
-    .ftmv-lms-course-details-form, .ftmv-lms-programme-details-form {
+    .ftmv-lms-details-form {
         width: 90%;
     }
 
@@ -120,3 +126,10 @@ tfoot tr .manage-column {
     margin: 2rem 0;
 }
 
+.wp-core-ui .notice.is-dismissible {
+    height: 50px;
+    width: 60%;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}

@@ -34,7 +34,9 @@ error_log('inside clas--unisntaller'); */
 class ftmv_lms_Uninstaller {
 
 	/**
-	 * On deactivation delete the "Saved" page.
+	 * On deactivation delete the database tables created
+     * Remove Any Roles created
+     * Change any students and facilitators that have roles associated with the plugin back to subsriber
 	 *
 	 * Get the "Saved" page id, check if it exists and delete the page that has that id.
 	 *
@@ -46,15 +48,13 @@ class ftmv_lms_Uninstaller {
 
         $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
         $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';
-        $facilitator_table_name = $wpdb->prefix . 'ftmv_lms_facilitator_table';
-        $student_table_name = $wpdb->prefix . 'ftmv_lms_student_table';
+        $user_table_name = $wpdb->prefix . 'ftmv_lms_user_table';
         $roles_table_name = $wpdb->prefix . 'ftmv_lms_roles_table';
 
         $tableArray = [   
                         $main_programme_table_name,
                         $course_table_name,
-                        $facilitator_table_name,
-                        $student_table_name,
+                        $user_table_name,
                         $roles_table_name
                     ];
 

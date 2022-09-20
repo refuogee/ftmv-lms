@@ -1,5 +1,73 @@
 <?php    
     
+    function create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email)
+    {
+        //  $password = wp_generate_password( 6, false );
+        
+        $password = ('testpass123');
+           
+        echo '<br>';
+        
+        
+        $wp_user_id = wp_create_user( $user_email, $password, $user_email );
+        
+        $current_user_id = wp_get_current_user()->ID;
+        
+        if ( is_wp_error( $wp_user_id ) ) 
+        {
+            error_log('ERROR: ' . $wp_user_id->get_error_message());
+            $message_type = 'error';
+            $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => $wp_user_id->get_error_message(), 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);            
+            set_transient( 'user_creation_form_transient', $user_creation_details, 60 );
+        } 
+        else 
+        {
+            wp_update_user(
+                array(
+                  'ID'          =>    $wp_user_id,
+                  'nickname'    =>    $user_email,
+                  'first_name'  =>    $user_name,
+                  'last_name'   =>    $user_surname
+                )
+              );      
+              $new_wp_user = new WP_User( $wp_user_id );
+              $new_wp_user->set_role( $role );      
+              $message_type = 'success';
+              $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => 'User Successfuly Created', 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);
+              set_transient( 'user_creation_form_transient', $user_creation_details, 60 );
+              return $wp_user_id;
+        }
+    }
+
+    function add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id)
+    {
+        $time_stamp = date("Y-m-d H:i:s"); 
+        global $wpdb;
+        $user_table = $wpdb->prefix.'ftmv_lms_user_table';
+        $user_data = array('wp_user_id' => $wp_user_id, 'timecreated' => $time_stamp, 'created_user_id' => $created_user_id, 'main_programme_id' => $programme_id, 'course_id' => $course_id, 'assigned_role_id' => $role_id);
+        $format = array('%d', '%s', '%d', '%d', '%d');
+        $wpdb->insert($user_table, $user_data, $format);
+        $course_table = $wpdb->prefix.'ftmv_lms_course_table';
+        $wpdb->query("UPDATE {$course_table} SET student_count = student_count + 1 WHERE id = {$course_id}");
+    }
+
+    function manage_user_creation($created_user_id, $user_type, $course_id, $programme_id, $user_name, $user_surname, $user_email)    
+    {
+        
+        global $wpdb;
+        $roles_table = $wpdb->prefix.'ftmv_lms_roles_table';        
+        $role_query = "SELECT id, role_name FROM {$roles_table} WHERE main_programme_id = {$programme_id} AND role_type = '{$user_type}'";        
+        $role_data = $wpdb->get_results( $role_query, ARRAY_A );        
+        $role_name = $role_data[0]['role_display_name'];
+        $role_id = $role_data[0]['id'];
+        
+        $wp_user_id = create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email);
+        add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id);     
+         
+    }
+
+    // As the name says this helper function creates a programme and adds it to the programmes table
+
     function create_programme($user_id, $new_top_level_programme) 
     {
         // date_default_timezone_set('Africa/Johannesburg');
@@ -15,8 +83,15 @@
         $wpdb->insert($table,$data,$format);
         $programme_id = $wpdb->insert_id;
         
+        $current_user_id = wp_get_current_user()->ID;
+
+        $programme_success_details = array('user_id' => $current_user_id, 'message' => 'Programme Created Successfully');
+        set_transient( 'programme_creation_form_message_transient', $programme_success_details, 60 );
+
         return $programme_id;
     }
+
+    // As the name says this helper function creates a role and adds it to the role table
 
     function add_role_to_role_table($programme_id, $role_slug, $role_type, $role_display_name, $role_capability)    
     {
@@ -115,14 +190,10 @@
         
         global $wpdb;         
         $course_table = $wpdb->prefix."{$plugin_name_underscore}_course_table";
-        $wpdb->delete( $course_table,  array( 'id' => $course_id ));
-        
+        $wpdb->delete( $course_table,  array( 'id' => $course_id ));        
         $programme_table = $wpdb->prefix."{$plugin_name_underscore}_main_programme_table";
-
-        // $wpdb->update( $programme_table,  array( 'id' => $programme_id ));
-        // $programme_course_count_update_query = "UPDATE {$programme_table} SET course_count = course_count - 1 WHERE id = {$programme_id}";
         $wpdb->query("UPDATE {$programme_table} SET course_count = course_count - 1 WHERE id = {$programme_id}");
-        //$wpdb->get_results( $programme_query, ARRAY_A );
+        
     }
 
     function handle_course_deletion($programme_id, $course_id, $plugin_name_underscore)
