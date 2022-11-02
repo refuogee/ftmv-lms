@@ -1,9 +1,15 @@
-.programme-courses-table , .main-course-list-table {
+.programme-facilitators-table, .programme-courses-table , .main-course-list-table {
     width : 70%;
 }
 
-.programme-courses-table {
+.programme-facilitators-table, .programme-courses-table {
     margin-top : 1rem;
+ 
+}
+
+.programme-facilitators-table {
+    margin-top : 1rem;
+    margin-bottom : 2rem;
 }
 
 h2 {

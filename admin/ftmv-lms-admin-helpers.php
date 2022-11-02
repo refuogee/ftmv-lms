@@ -31,15 +31,19 @@
                 )
               );      
               $new_wp_user = new WP_User( $wp_user_id );
-              $new_wp_user->set_role( $role );      
+              error_log('About to create new WP user');
+              error_log("Role name = {$role_name}");
+
+              $new_wp_user->set_role( $role_name );      
               $message_type = 'success';
               $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => 'User Successfuly Created', 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);
               set_transient( 'user_creation_form_transient', $user_creation_details, 60 );
+              
               return $wp_user_id;
         }
     }
 
-    function add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id)
+    function add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id, $user_type)
     {
         $time_stamp = date("Y-m-d H:i:s"); 
         global $wpdb;
@@ -48,7 +52,11 @@
         $format = array('%d', '%s', '%d', '%d', '%d');
         $wpdb->insert($user_table, $user_data, $format);
         $course_table = $wpdb->prefix.'ftmv_lms_course_table';
-        $wpdb->query("UPDATE {$course_table} SET student_count = student_count + 1 WHERE id = {$course_id}");
+        if ($user_type == "student") 
+        {
+            $wpdb->query("UPDATE {$course_table} SET student_count = student_count + 1 WHERE id = {$course_id}");
+        }
+        
     }
 
     function manage_user_creation($created_user_id, $user_type, $course_id, $programme_id, $user_name, $user_surname, $user_email)    
@@ -57,12 +65,23 @@
         global $wpdb;
         $roles_table = $wpdb->prefix.'ftmv_lms_roles_table';        
         $role_query = "SELECT id, role_name FROM {$roles_table} WHERE main_programme_id = {$programme_id} AND role_type = '{$user_type}'";        
+        
+        error_log("Role query: {$role_query} ");
+
         $role_data = $wpdb->get_results( $role_query, ARRAY_A );        
-        $role_name = $role_data[0]['role_display_name'];
+
+        error_log("Role data");
+        error_log(print_r($role_data, true));
+        
+
+        $role_name = $role_data[0]['role_name'];
+
+        error_log("inside manage user creation and the role name here is: {$role_name}");
+
         $role_id = $role_data[0]['id'];
         
         $wp_user_id = create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email);
-        add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id);     
+        add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id, $user_type);     
          
     }
 
@@ -105,7 +124,9 @@
         
         $wpdb->insert($table,$data,$format);
         $programme_id = $wpdb->insert_id;
-        
+
+        $capabilities = array($role_capability => true);        
+        wp_roles()->add_role( $role_slug, $role_display_name, $capabilities );
     }
 
 

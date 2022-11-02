@@ -361,7 +361,16 @@ class ftmv_lms_Admin {
                 $transient_message = get_transient( 'user_creation_form_transient' );              
                 if ($transient_message['message_type'] =='success' )
                 {
-                    wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id={$course_id}&programme-id={$programme_id}") );
+                    if ($user_type == "student")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id={$course_id}&programme-id={$programme_id}") );
+                    }
+
+                    if ($user_type == "facilitator")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id={$programme_id}") );
+                    }
+                    
                 }                         
                 else 
                 {

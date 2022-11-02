@@ -209,7 +209,7 @@
                 $transient_message = get_transient( 'programme_creation_form_message_transient' );    
                 if( ! empty( $transient_message ) ) 
                 {   
-                    var_dump($transient_message);
+                    
                     if ($transient_message['user_id'] == wp_get_current_user()->ID)
                     {                        
                         echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
