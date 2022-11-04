@@ -496,7 +496,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 
     <div class="programme-facilitators-table">
         <?php
-            $transient_message = get_transient( 'course_creation_form_message_transient' );              
+            $transient_message = get_transient( 'user_creation_form_transient' );              
             if( ! empty( $transient_message ) ) 
             {   
                 if ($transient_message['user_id'] == wp_get_current_user()->ID)
@@ -508,7 +508,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         ?>
         <h3>Facilitators List:</h3>    
         <p>            
-            This is a list of all the facilitators with the program<br>            
+            This is a list of all the facilitators assigned to manage this programme.<br>            
         </p>
         <?php
             $facilitator_table = new Facilitator_List_Table();

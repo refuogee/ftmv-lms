@@ -56,6 +56,11 @@
         {
             $wpdb->query("UPDATE {$course_table} SET student_count = student_count + 1 WHERE id = {$course_id}");
         }
+        $programme_table = $wpdb->prefix.'ftmv_lms_main_programme_table';
+        if ($user_type == "facilitator") 
+        {
+            $wpdb->query("UPDATE {$programme_table} SET facilitator_count = facilitator_count + 1 WHERE id = {$programme_id}");
+        }
         
     }
 

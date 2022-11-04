@@ -76,7 +76,7 @@ $current_page = admin_url(sprintf('admin.php?%s', http_build_query($_GET)));
         {   
             if ($transient_message['user_id'] == wp_get_current_user()->ID)
             {                        
-                if ($transient_message['message_type'] =='error' );
+                if ($transient_message['message_type'] == 'error' );
                 echo ("<div class='notice notice-error is-dismissible'><p>{$transient_message['message']}</p></div>");
             } 
             

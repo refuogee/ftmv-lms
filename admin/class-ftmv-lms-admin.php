@@ -358,7 +358,8 @@ class ftmv_lms_Admin {
                 
                 manage_user_creation($created_user_id, $user_type, $course_id, $programme_id, $user_name, $user_surname, $user_email);
                 
-                $transient_message = get_transient( 'user_creation_form_transient' );              
+                $transient_message = get_transient( 'user_creation_form_transient' );       
+                       
                 if ($transient_message['message_type'] =='success' )
                 {
                     if ($user_type == "student")
