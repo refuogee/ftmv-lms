@@ -196,6 +196,15 @@ class ftmv_lms_Admin {
 			array( $this, 'display_add_user' )
 		);
 
+        add_submenu_page(
+			"{$this->plugin_name}-overview",
+			__( 'User Details', "{$this->plugin_name}-edit-user" ),
+			__( 'User Details', "{$this->plugin_name}-edit-user" ),
+			'manage_options',
+			"{$this->plugin_name}-edit-user",
+			array( $this, 'display_edit_user' )
+		);
+
 	}
 
     public function hide_pages( $submenu_file ) {
@@ -227,6 +236,12 @@ class ftmv_lms_Admin {
 	 *
 	 * @since    1.0.0
 	 */
+    public function display_edit_user() {
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-user-overview.php";
+
+	}
+
     public function display_add_user() {
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . "admin/partials/{$this->plugin_name}-add-user.php";
@@ -573,5 +588,53 @@ class ftmv_lms_Admin {
             }
         }
     } 
+
+    public function edit_user () {        
+        $created_user_id = wp_get_current_user()->ID;
+
+        if(isset($_POST['ftmv_edit_user_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_edit_user_nonce'], 'ftmv_edit_user_nonce')) 
+            {
+                var_dump($_POST);
+                /* $course_id = sanitize_text_field( $_POST['course-id'] );
+                $programme_id = sanitize_text_field( $_POST['programme-id'] );
+                $user_type = sanitize_text_field( $_POST['user-type'] );
+                $user_name = sanitize_text_field( $_POST['user-name'] );
+                $user_surname = sanitize_text_field( $_POST['user-surname'] );
+                $user_email = sanitize_email( $_POST['user-email'] );
+                $form_url = sanitize_url( $_POST['current-url'] );
+                
+                manage_user_creation($created_user_id, $user_type, $course_id, $programme_id, $user_name, $user_surname, $user_email);
+                
+                $transient_message = get_transient( 'user_creation_form_transient' );       
+                       
+                if ($transient_message['message_type'] =='success' )
+                {
+                    if ($user_type == "student")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id={$course_id}&programme-id={$programme_id}") );
+                    }
+
+                    if ($user_type == "facilitator")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id={$programme_id}") );
+                    }
+                    
+                }                         
+                else 
+                {
+                    wp_redirect( $form_url );
+                } */
+                
+                
+                // wp_redirect( $form_url );
+
+            } else {
+                echo 'broke';
+                exit;
+            }
+        }
+    }
 
 }

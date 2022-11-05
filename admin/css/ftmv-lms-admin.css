@@ -119,6 +119,10 @@ tfoot tr .manage-column {
     width: 100%;
 }
 
+.ftmv-lms-input-container input:read-only {
+    opacity : 0.7;
+}
+
 
 .ftmv-lms-form-button-container {    
     margin-top: 4rem;
@@ -139,3 +143,4 @@ tfoot tr .manage-column {
     display: flex;
     align-items: center;
 }
+

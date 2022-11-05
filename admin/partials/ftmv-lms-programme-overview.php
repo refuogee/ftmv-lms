@@ -13,7 +13,7 @@
  */
 
 
-$progamme_id = $_GET['id'];
+$programme_id = $_GET['id'];
 $ftmv_edit_programme_nonce = wp_create_nonce('ftmv_edit_programme_nonce');
 $ftmv_delete_programme_nonce = wp_create_nonce('ftmv_delete_programme_nonce');
 
@@ -21,11 +21,11 @@ global $wpdb;
 
 // error_log(gettype($arg));
 
-$query = "SELECT programme_info.id AS id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID WHERE programme_info.id =".$progamme_id."";
+$programme_data_query = "SELECT programme_info.id AS id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID WHERE programme_info.id =".$programme_id."";
 
 // error_log($query);
 
-$result = $wpdb->get_results( $query, ARRAY_A );
+$program_data = $wpdb->get_results( $programme_data_query, ARRAY_A );
 
 $user_type = 'facilitator';
 
@@ -35,6 +35,8 @@ $user_type = 'facilitator';
 if( is_admin() && !class_exists( 'WP_List_Table' ) )
         require_once( ABSPATH . 'wp-admin\includes\list-table.php');
         
+        
+
         class Facilitator_List_Table extends WP_List_Table        
         {
             /**
@@ -74,12 +76,13 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             public function get_columns()
             {
                 $columns = array(
-                    'id'                => 'ID',            
-                    'user_name'         => 'Facilitator',            
-                    'created_user_name' => 'Created By',
-                    'timecreated'       => 'Date Created'
+                    'id'                => 'ID',
+                    'name'              => 'Facilitator',                    
+                    'role_display_name' => 'Role',                    
+                    'created_user_name'      => 'Created By',
+                    'timecreated'       => 'Date Created'                                        
                 );
-        
+
                 return $columns;
             }
 
@@ -115,10 +118,26 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id `WHERE` first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
 
                 // $query = "SELECT course.id, course.timecreated, course.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.created_user_id = user_info.ID" ;
-                $progamme_id = $_GET['id'];
-                // $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $progamme_id . "";
+                /* $programme_id = $_GET['id'];
+                $course_query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $programme_id . "";
+
                 
-                $facilitator_query = "SELECT lms_user.id, lms_user.timecreated, wp_user.user_email AS user_email, role.role_display_name, concat(wp_user_name_created.meta_value,' ' , wp_user_surname_created.meta_value) AS created_user_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS user_name FROM wp_ftmv_lms_user_table AS lms_user LEFT JOIN wp_users AS wp_user ON lms_user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name_created ON lms_user.created_user_id = wp_user_name_created.user_id LEFT JOIN wp_usermeta AS wp_user_surname_created ON lms_user.created_user_id = wp_user_surname_created.user_id LEFT JOIN wp_usermeta AS wp_user_name ON lms_user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON lms_user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = lms_user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = lms_user.wp_user_id AND wp_user_name_created.meta_key = 'first_name' AND wp_user_surname_created.meta_key = 'last_name' AND wp_user_name_created.user_id = lms_user.created_user_id AND lms_user.main_programme_id = {$progamme_id} AND role.role_type = 'facilitator';";
+               $results = $wpdb->get_results( $course_query, ARRAY_A );
+                
+                foreach ($results as $key => $result) {
+                    $start_date = strtotime($result['startdate']);                    
+                    $end_date = strtotime($result['enddate']);                    
+                    $date_created = strtotime($result['timecreated']);                    
+                    $results[$key]['startdate'] = date('j M Y', $start_date); 
+                    $results[$key]['enddate'] = date('j M Y', $end_date); 
+                    $results[$key]['timecreated'] = date('j M Y', $date_created); 
+                } */
+
+                $programme_id = $_GET['id'];
+                // $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $programme_id . "";
+                
+                $facilitator_query = "SELECT lms_user.id, lms_user.timecreated, role.role_display_name, concat(wp_user_name_created.meta_value,' ' , wp_user_surname_created.meta_value) AS created_user_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS facilitator FROM wp_ftmv_lms_user_table AS lms_user LEFT JOIN wp_users AS wp_user ON lms_user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name_created ON lms_user.created_user_id = wp_user_name_created.user_id LEFT JOIN wp_usermeta AS wp_user_surname_created ON lms_user.created_user_id = wp_user_surname_created.user_id LEFT JOIN wp_usermeta AS wp_user_name ON lms_user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON lms_user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = lms_user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = lms_user.wp_user_id AND wp_user_name_created.meta_key = 'first_name' AND wp_user_surname_created.meta_key = 'last_name' AND wp_user_name_created.user_id = lms_user.created_user_id AND lms_user.main_programme_id = {$programme_id} AND role.role_type = 'facilitator';";
+                
                 
                 $results = $wpdb->get_results( $facilitator_query, ARRAY_A );
 
@@ -127,8 +146,9 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                     $results[$key]['timecreated'] = date('j M Y', $date_created); 
                 }
 
-                return $results;
-             
+                
+
+                return $results; 
             }
         
             /**
@@ -143,15 +163,18 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
             public function column_name( $item)
             {
-                $progamme_id = $_GET['id'];
+                
+                $programme_id = $_GET['id'];
                 /* error_log( print_r($item, true));
                 error_log( $item['id'] ); */
-                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id'] . '&programme-id=' . $progamme_id);
-                $view_link = get_permalink( $item['name'] ); 
+
+                // wp-admin/admin.php?page=ftmv-lms-edit-user&uid=36
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-edit-user&uid=' .  $item['id']);
+                $view_link = get_permalink( $item['facilitator'] ); 
                 $output    = '';
         
                 // Title.
-                $output .= '<strong><a href="' . esc_url( $edit_link ) . '" class="row-title">' . esc_html(  $item['name']   ) . '</a></strong>';
+                $output .= '<strong><a href="' . esc_url( $edit_link ) . '" class="row-title">' . esc_html(  $item['facilitator']   ) . '</a></strong>';
         
                 // Get actions.
                 $actions = array(
@@ -171,14 +194,15 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         
                 return $output;
             }
-            
+             
             public function column_default( $item, $column_name )
             {
                 switch( $column_name ) {
-                    case 'id':                     
-                    case 'user_name':                     
-                    case 'created_user_name':                    
-                    case 'timecreated':                    
+                    case 'id': 
+                    case 'timecreated':
+                    case 'role_display_name': 
+                    case 'created_user_name':
+                    case 'facilitator':                     
                         return $item[ $column_name ];
                     default:
                         return print_r( $item, true ) ;
@@ -222,6 +246,8 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             }
         }
 
+        
+        /**************************************************************** */
 
         class Course_List_Table extends WP_List_Table        
         {
@@ -306,8 +332,8 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id `WHERE` first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
 
                 // $query = "SELECT course.id, course.timecreated, course.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.created_user_id = user_info.ID" ;
-                $progamme_id = $_GET['id'];
-                $course_query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $progamme_id . "";
+                $programme_id = $_GET['id'];
+                $course_query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $programme_id . "";
                 
                $results = $wpdb->get_results( $course_query, ARRAY_A );
                 
@@ -334,10 +360,10 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
             public function column_name( $item)
             {
-                $progamme_id = $_GET['id'];
+                $programme_id = $_GET['id'];
                 /* error_log( print_r($item, true));
                 error_log( $item['id'] ); */
-                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id'] . '&programme-id=' . $progamme_id);
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-course-overview&course-id=' .  $item['id'] . '&programme-id=' . $programme_id);
                 $view_link = get_permalink( $item['name'] ); 
                 $output    = '';
         
@@ -433,7 +459,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             You can edit the programme name here or delete the programme entirely.<br>
     </p>   
     
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-details-form">        
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $program_data[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-details-form">        
         <input type="hidden" name="action" value="ftmv_edit_programme">  
 		<input type="hidden" name="ftmv_edit_programme_nonce" value="<?php echo $ftmv_edit_programme_nonce ?>" />			    			  
         
@@ -445,7 +471,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             </div>
             
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-date" id="programme-created-date" value="<?php echo esc_attr($result[0]['timecreated'])?>" disabled>
+                <input type="text" name="programme-created-date" id="programme-created-date" value="<?php echo esc_attr($program_data[0]['timecreated'])?>" disabled>
             </div>
         </div>
 
@@ -454,7 +480,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="programme-created-user">Created by:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-created-user" id="programme-created-user" value="<?php echo esc_attr($result[0]['created_user']) ?>" disabled>
+                <input type="text" name="programme-created-user" id="programme-created-user" value="<?php echo esc_attr($program_data[0]['created_user']) ?>" disabled>
             </div>
         </div>
 
@@ -464,7 +490,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 <label for="programme-name">Programme Name:</label>
             </div>
             <div class="ftmv-lms-input-container">
-                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo esc_attr($result[0]['name']) ?>" required> <br>
+                <input type="text" name="programme-name" id="programme-name" placeholder="<?php echo esc_attr($program_data[0]['name']) ?>" required> <br>
             </div>
         </div>
 
@@ -476,7 +502,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 
     </form>
 
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $result[0]['id'] .'' ) ); ?>" method="post" id="ftmv_delete_programme" class="ftmv-lms-delete-programme-form">        
+    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $program_data[0]['id'] .'' ) ); ?>" method="post" id="ftmv_delete_programme" class="ftmv-lms-delete-programme-form">        
         <input type="hidden" name="action" value="ftmv_delete_programme">  
 		<input type="hidden" name="ftmv_delete_programme_nonce" value="<?php echo $ftmv_delete_programme_nonce ?>" />			    			  
         
@@ -517,7 +543,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         ?>
         
 
-        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-user&programme-id='. esc_attr($progamme_id) . '&user-type='. esc_attr($user_type))) ?>"> <button type="button" class="button button-primary">Add New Facilitator</button></a>
+        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-user&programme-id='. esc_attr($programme_id) . '&user-type='. esc_attr($user_type))) ?>"> <button type="button" class="button button-primary">Add New Facilitator</button></a>
 
     </div>
     
@@ -547,7 +573,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             $course_table->display();            
         ?>
 
-        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-course&id=' . $result[0]['id'])) . '' ?>"> <button type="button" class="button button-primary">Add New Course</button></a>
+        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-course&id=' . $program_data[0]['id'])) . '' ?>"> <button type="button" class="button button-primary">Add New Course</button></a>
     
     </div>
     

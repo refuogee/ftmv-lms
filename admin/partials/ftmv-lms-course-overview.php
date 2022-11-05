@@ -48,7 +48,7 @@ foreach ($results as $key => $result) {
 if( is_admin() && !class_exists( 'WP_List_Table' ) )
         require_once( ABSPATH . 'wp-admin\includes\list-table.php');
         
-        class List_Table extends WP_List_Table
+        class Student_List_Table extends WP_List_Table
         {
             /**
              * Prepare the items for the table to process
@@ -87,11 +87,13 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             public function get_columns()
             {
                 $columns = array(
-                    'id'                => 'ID',
-                    'user_name'         => 'Student Name',
-                    'user_email'        => 'Email',
-                    'created_user_name'      => 'Student Created By',                    
+                    'id'                     => 'ID',
+                    'name'                   => 'Student Name',
+                    'user_email'             => 'Email',
                     'role_display_name'      => 'Student Role',                    
+                    'created_user_name'      => 'Student Created By',              
+                    'timecreated'           => 'Date Created',                          
+                    
                 );
         
                 return $columns;
@@ -132,21 +134,14 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 
                 $course_id = $_GET['course-id'];
                 
-                $student_table_query = "SELECT lms_user.id, wp_user.user_email AS user_email, role.role_display_name, concat(wp_user_name_created.meta_value,' ' , wp_user_surname_created.meta_value) AS created_user_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS user_name FROM wp_ftmv_lms_user_table AS lms_user LEFT JOIN wp_users AS wp_user ON lms_user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name_created ON lms_user.created_user_id = wp_user_name_created.user_id LEFT JOIN wp_usermeta AS wp_user_surname_created ON lms_user.created_user_id = wp_user_surname_created.user_id LEFT JOIN wp_usermeta AS wp_user_name ON lms_user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON lms_user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = lms_user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = lms_user.wp_user_id AND wp_user_name_created.meta_key = 'first_name' AND wp_user_surname_created.meta_key = 'last_name' AND wp_user_name_created.user_id = lms_user.created_user_id AND lms_user.course_id = '{$course_id}' AND role.role_type = 'student';";
+                $student_table_query = "SELECT lms_user.timecreated, lms_user.id, wp_user.user_email AS user_email, role.role_display_name, concat(wp_user_name_created.meta_value,' ' , wp_user_surname_created.meta_value) AS created_user_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS user_name FROM wp_ftmv_lms_user_table AS lms_user LEFT JOIN wp_users AS wp_user ON lms_user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name_created ON lms_user.created_user_id = wp_user_name_created.user_id LEFT JOIN wp_usermeta AS wp_user_surname_created ON lms_user.created_user_id = wp_user_surname_created.user_id LEFT JOIN wp_usermeta AS wp_user_name ON lms_user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON lms_user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = lms_user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = lms_user.wp_user_id AND wp_user_name_created.meta_key = 'first_name' AND wp_user_surname_created.meta_key = 'last_name' AND wp_user_name_created.user_id = lms_user.created_user_id AND lms_user.course_id = '{$course_id}' AND role.role_type = 'student';";
                 
                 $results = $wpdb->get_results( $student_table_query, ARRAY_A );
-
-                // error_log(var_dump($results));
-                    
-                /*
-                foreach ($results as $key => $result) {
-                    $start_date = strtotime($result['startdate']);                    
-                    $end_date = strtotime($result['enddate']);                    
-                    $results[$key]['startdate'] = date('d/M/Y', $start_date); 
-                    $results[$key]['enddate'] = date('d/M/Y', $end_date); 
-                }
-                */
                 
+                foreach ($results as $key => $result) {
+                    $time_created = strtotime($result['timecreated']);                    
+                    $results[$key]['timecreated'] = date('j M Y', $time_created); 
+                }
                 
                 return $results; 
             }
@@ -163,19 +158,20 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
             public function column_name( $item)
             {
-                /* error_log( print_r($item, true));
-                error_log( $item['id'] ); */
-                $edit_link = admin_url( 'admin.php?page=ftmv-lms-programme-overview&id=' .  $item['id']  );
-                $view_link = get_permalink( $item['name'] ); 
+                                
+                $edit_link = admin_url( 'admin.php?page=ftmv-lms-edit-user&uid=' .  $item['id']);
+                $view_link = get_permalink( $item['user_name'] ); 
                 $output    = '';
         
                 // Title.
-                $output .= '<strong><a href="' . esc_url( $edit_link ) . '" class="row-title">' . esc_html(  $item['name']   ) . '</a></strong>';
+                $output .= '<strong><a href="' . esc_url( $edit_link ) . '" class="row-title">' . esc_html(  $item['user_name']   ) . '</a></strong>';
         
                 // Get actions.
                 $actions = array(
-                    'edit'   => '<a target="_blank" href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>',
-                    'delete'   => '<a target="_blank" href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>',
+                    'edit'   => '<a target="_blank" href="' . esc_url( $edit_link ) . '">' . esc_html__( 'Edit', 'my_plugin' ) . '</a>'
+                    // This is for the links that appear below the content - commented out because I don't want users to delete from this screen.
+                    /* 'delete'   => '<a href="' . esc_url( $view_link ) . '">' . esc_html__( 'Delete', 'my_plugin' ) . '</a>', */
+                    
                 );
         
                 $row_actions = array();
@@ -193,10 +189,12 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 switch( $column_name ) {
                     case 'id': 
-                    case 'user_name':                    
+                    case 'user_name':            
                     case 'user_email':                    
-                    case 'created_user_name':
                     case 'role_display_name':
+                    case 'created_user_name':
+                    case 'timecreated':
+                    
                         return $item[ $column_name ];
                     default:
                         return print_r( $item, true ) ;
@@ -373,7 +371,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             To delete click delete. <br>
         </p>
         <?php
-            $table = new List_Table();
+            $table = new Student_List_Table();
             $table->prepare_items();
             $table->display();           
         ?>
