@@ -88,7 +88,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 $columns = array(
                     'id'                     => 'ID',
-                    'name'                   => 'Student Name',
+                    'student'                   => 'Student Name',
                     'user_email'             => 'Email',
                     'role_display_name'      => 'Student Role',                    
                     'created_user_name'      => 'Student Created By',              
@@ -156,7 +156,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
              */
 
             
-            public function column_name( $item)
+            public function column_student( $item)
             {
                                 
                 $edit_link = admin_url( 'admin.php?page=ftmv-lms-edit-user&uid=' .  $item['id']);
@@ -255,7 +255,19 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
                 }
                 
             } 
-            
+        }
+
+        $transient_delete_message = get_transient( 'user_deletion_transient' );              
+        if( ! empty( $transient_delete_message ) ) 
+        {   
+            if ($transient_delete_message['user_id'] == wp_get_current_user()->ID)
+            {                        
+                if ($transient_delete_message['message_type'] =='success' )
+                {
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_delete_message['message']}</p></div>");
+                }
+                
+            } 
         }
     ?>
     <h2>Course Details:</h2>    

@@ -637,4 +637,51 @@ class ftmv_lms_Admin {
         }
     }
 
+    public function delete_user () {        
+        
+        $created_user_id = wp_get_current_user()->ID;
+        
+        if(isset($_POST['ftmv_delete_user_nonce'])) {
+            
+            if(wp_verify_nonce($_POST['ftmv_delete_user_nonce'], 'ftmv_delete_user_nonce')) 
+            {
+                
+                $uid = sanitize_text_field( $_POST['uid'] );
+                $user_type = sanitize_text_field( $_POST['user-type'] );
+                $course_id = sanitize_text_field( $_POST['course-id'] );
+                $programme_id = sanitize_text_field( $_POST['programme-id'] );
+                
+                manage_user_deletion($uid, $user_type);    
+
+                
+                $transient_message = get_transient( 'user_deletion_transient' );       
+                       
+                if ($transient_message['message_type'] =='success' )
+                {
+                    if ($user_type == "student")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-course-overview&course-id={$course_id}&programme-id={$programme_id}") );
+                    }
+
+                    if ($user_type == "facilitator")
+                    {
+                        wp_redirect( admin_url("/admin.php?page=ftmv-lms-programme-overview&id={$programme_id}") );
+                    }
+                    
+                }                         
+                else 
+                {
+                    wp_redirect( $form_url );
+                } 
+                
+                
+                // wp_redirect( $form_url );
+
+            } else {
+                echo 'broke';
+                exit;
+            }
+        }
+    }
+
 }

@@ -77,7 +77,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             {
                 $columns = array(
                     'id'                => 'ID',
-                    'name'              => 'Facilitator',                    
+                    'facilitator'              => 'Facilitator',                    
                     'role_display_name' => 'Role',                    
                     'created_user_name'      => 'Created By',
                     'timecreated'       => 'Date Created'                                        
@@ -113,40 +113,16 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
              */
             private function table_data()
             {
-                global $wpdb;
-                
-                // $query = "SELECT main_course_info.id, main_course_info.timecreated, main_course_info.name, concat(first_meta.meta_value,' ' , last_meta.meta_value) AS created_user FROM ".$wpdb->prefix."ftmv_lms_main_course_table AS main_course_info LEFT JOIN wp_usermeta AS first_meta ON main_course_info.ID = first_meta.user_id LEFT JOIN wp_usermeta AS last_meta ON main_course_info.ID = last_meta.user_id `WHERE` first_meta.meta_key = 'first_name' AND first_meta.user_id = 1 AND last_meta.meta_key = 'last_name' AND last_meta.user_id = 1";
-
-                // $query = "SELECT course.id, course.timecreated, course.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.created_user_id = user_info.ID" ;
-                /* $programme_id = $_GET['id'];
-                $course_query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $programme_id . "";
-
-                
-               $results = $wpdb->get_results( $course_query, ARRAY_A );
-                
-                foreach ($results as $key => $result) {
-                    $start_date = strtotime($result['startdate']);                    
-                    $end_date = strtotime($result['enddate']);                    
-                    $date_created = strtotime($result['timecreated']);                    
-                    $results[$key]['startdate'] = date('j M Y', $start_date); 
-                    $results[$key]['enddate'] = date('j M Y', $end_date); 
-                    $results[$key]['timecreated'] = date('j M Y', $date_created); 
-                } */
+                global $wpdb;                
 
                 $programme_id = $_GET['id'];
-                // $query = "SELECT course.id, course.timecreated, course.name, course.startdate, course.enddate, course.student_count, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_course_table AS course LEFT JOIN ".$wpdb->prefix."users AS user_info ON course.created_user_id = user_info.ID LEFT JOIN ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info ON programme_info.id = course.main_programme_id WHERE course.main_programme_id = " . $programme_id . "";
-                
                 $facilitator_query = "SELECT lms_user.id, lms_user.timecreated, role.role_display_name, concat(wp_user_name_created.meta_value,' ' , wp_user_surname_created.meta_value) AS created_user_name, concat(wp_user_name.meta_value,' ' , wp_user_surname.meta_value) AS facilitator FROM wp_ftmv_lms_user_table AS lms_user LEFT JOIN wp_users AS wp_user ON lms_user.wp_user_id = wp_user.ID LEFT JOIN wp_usermeta AS wp_user_name_created ON lms_user.created_user_id = wp_user_name_created.user_id LEFT JOIN wp_usermeta AS wp_user_surname_created ON lms_user.created_user_id = wp_user_surname_created.user_id LEFT JOIN wp_usermeta AS wp_user_name ON lms_user.wp_user_id = wp_user_name.user_id LEFT JOIN wp_usermeta AS wp_user_surname ON lms_user.wp_user_id = wp_user_surname.user_id LEFT JOIN wp_ftmv_lms_roles_table AS role ON role.id = lms_user.assigned_role_id WHERE wp_user_name.meta_key = 'first_name' AND wp_user_surname.meta_key = 'last_name' AND wp_user_name.user_id = lms_user.wp_user_id AND wp_user_name_created.meta_key = 'first_name' AND wp_user_surname_created.meta_key = 'last_name' AND wp_user_name_created.user_id = lms_user.created_user_id AND lms_user.main_programme_id = {$programme_id} AND role.role_type = 'facilitator';";
-                
-                
                 $results = $wpdb->get_results( $facilitator_query, ARRAY_A );
 
                 foreach ($results as $key => $result) {                 
                     $date_created = strtotime($result['timecreated']);                    
                     $results[$key]['timecreated'] = date('j M Y', $date_created); 
                 }
-
-                
 
                 return $results; 
             }
@@ -161,14 +137,9 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
              */
 
             
-            public function column_name( $item)
+            public function column_facilitator( $item)
             {
-                
-                $programme_id = $_GET['id'];
-                /* error_log( print_r($item, true));
-                error_log( $item['id'] ); */
-
-                // wp-admin/admin.php?page=ftmv-lms-edit-user&uid=36
+                                
                 $edit_link = admin_url( 'admin.php?page=ftmv-lms-edit-user&uid=' .  $item['id']);
                 $view_link = get_permalink( $item['facilitator'] ); 
                 $output    = '';
@@ -448,6 +419,20 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
 <div id="wrap">
+    <?php
+        $transient_delete_message = get_transient( 'user_deletion_transient' );              
+        if( ! empty( $transient_delete_message ) ) 
+        {   
+            if ($transient_delete_message['user_id'] == wp_get_current_user()->ID)
+            {                        
+                if ($transient_delete_message['message_type'] =='success' )
+                {
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_delete_message['message']}</p></div>");
+                }
+                
+            } 
+        }
+    ?>
     <h2>Programme Details:</h2>    
     <p>
         On this page you can see the details for a specific programme as well as the courses that fall under this programme. <br> 
@@ -520,18 +505,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
     
     <hr>
 
-    <div class="programme-facilitators-table">
-        <?php
-            $transient_message = get_transient( 'user_creation_form_transient' );              
-            if( ! empty( $transient_message ) ) 
-            {   
-                if ($transient_message['user_id'] == wp_get_current_user()->ID)
-                {                        
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
-                } 
-                
-            }
-        ?>
+    <div class="programme-facilitators-table">        
         <h3>Facilitators List:</h3>    
         <p>            
             This is a list of all the facilitators assigned to manage this programme.<br>            

@@ -36,7 +36,7 @@
 
               $new_wp_user->set_role( $role_name );      
               $message_type = 'success';
-              $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => 'User Successfuly Created', 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);
+              $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Created", 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);
               set_transient( 'user_creation_form_transient', $user_creation_details, 60 );
               
               return $wp_user_id;
@@ -88,6 +88,46 @@
         $wp_user_id = create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email);
         add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id, $user_type);     
          
+    }
+
+    function remove_user_from_lms_tables($uid)
+    {
+        global $wpdb;
+        $lms_user_table = $wpdb->prefix.'ftmv_lms_user_table';               
+        return $wpdb->delete( $lms_user_table,  array( 'id' => $uid ));
+    }
+
+    function remove_user_from_wp($uid)
+    {
+        global $wpdb;
+        $lms_user_table = $wpdb->prefix.'ftmv_lms_user_table';        
+        $lms_user_query = "SELECT wp_user_id FROM {$lms_user_table} WHERE id = {$uid}";        
+        $lms_user_data = $wpdb->get_results( $lms_user_query, ARRAY_A );        
+
+        $wp_user_id_to_be_deleted = $lms_user_data[0]['wp_user_id'];
+
+        
+
+        return wp_delete_user( $wp_user_id_to_be_deleted );
+    }
+
+    function manage_user_deletion($uid, $user_type)
+    {   
+
+        $current_user_id = wp_get_current_user()->ID;
+
+        if (remove_user_from_wp($uid) == 1 && remove_user_from_lms_tables($uid) == 1)
+        {
+            $message_type = 'success';
+            $user_deletion_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Deleted");
+            set_transient( 'user_deletion_transient', $user_deletion_details, 60 );
+        }
+        else
+        {
+            $message_type = 'fail';
+            $user_deletion_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => 'Error! Unable to Delete User');
+            set_transient( 'user_deletion_transient', $user_deletion_details, 60 );
+        }        
     }
 
     // As the name says this helper function creates a programme and adds it to the programmes table

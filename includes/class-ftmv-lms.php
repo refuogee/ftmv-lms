@@ -180,6 +180,7 @@ class ftmv_lms {
 
         $this->loader->add_action( 'admin_post_ftmv_add_user', $plugin_admin, 'add_user');      
         $this->loader->add_action( 'admin_post_ftmv_edit_user', $plugin_admin, 'edit_user');  
+        $this->loader->add_action( 'admin_post_ftmv_delete_user', $plugin_admin, 'delete_user');  
 
         $this->loader->add_action( 'admin_post_ftmv_delete_programme', $plugin_admin, 'delete_programme');
         $this->loader->add_action( 'admin_post_ftmv_delete_course', $plugin_admin, 'delete_course');
