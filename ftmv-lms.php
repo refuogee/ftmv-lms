@@ -41,11 +41,6 @@ function activate_ftmv_lms() {
 	ftmv_lms_Activator::activate();
 }
 
-/* function activate_ftmv_lms() {
-    require_once plugin_dir_path( __FILE__ ) . 'includes/class-ftmv-lms-activator.php';
-    ftmv_lms_Activator::activate();
-}
- */
 /**
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-ftmv-lms-deactivator.php

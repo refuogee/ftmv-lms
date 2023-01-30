@@ -61,7 +61,7 @@ class ftmv_lms_Uninstaller {
       foreach ($tableArray as $tablename) {
          $wpdb->query("DROP TABLE IF EXISTS $tablename");
          if ($wpdb->last_error) {
-            error_log ('You done bad! ' . $wpdb->last_error);
+            error_log ('Deletion of tables error! ' . $wpdb->last_error);
           }
       }
 
