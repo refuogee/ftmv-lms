@@ -15,7 +15,6 @@
 
 
 $programme_id = $_GET['programme-id'];
-error_log($programme_id);
 $course_id = $_GET['course-id'];
 $user_type = 'student';
 
@@ -242,34 +241,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<div id="wrap">
-    <?php
-        $transient_message = get_transient( 'user_creation_form_transient' );              
-        if( ! empty( $transient_message ) ) 
-        {   
-            if ($transient_message['user_id'] == wp_get_current_user()->ID)
-            {                        
-                if ($transient_message['message_type'] =='success' )
-                {
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
-                }
-                
-            } 
-        }
-
-        $transient_delete_message = get_transient( 'user_deletion_transient' );              
-        if( ! empty( $transient_delete_message ) ) 
-        {   
-            if ($transient_delete_message['user_id'] == wp_get_current_user()->ID)
-            {                        
-                if ($transient_delete_message['message_type'] =='success' )
-                {
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_delete_message['message']}</p></div>");
-                }
-                
-            } 
-        }
-    ?>
+<div id="wrap">    
     <h2>Course Details:</h2>    
     <p>
         On this page you can see the details for a specific course as well as the students that are linked to this course. <br> 
@@ -375,7 +347,35 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             
     
     <hr>
-    <div class="programme-courses-table">        
+    <div class="programme-courses-table">      
+    <?php
+
+        $user_creation_transient = get_transient( 'user_creation_form_transient' );              
+        if( ! empty( $user_creation_transient ) ) 
+        {   
+            if ($user_creation_transient['user_type'] == 'student' )
+                {
+                    if ($user_creation_transient['message_type'] == 'success' )
+                    {
+                        echo ("<div class='notice notice-success is-dismissible'><p>{$user_creation_transient['message']}</p></div>");
+                    }
+                } 
+        }
+
+        $user_deleted_transient = get_transient( 'user_deletion_transient' );              
+        if( ! empty( $user_deleted_transient ) ) 
+        {   
+            if ($user_deleted_transient['user_id'] == wp_get_current_user()->ID)
+            {                        
+                if ($user_deleted_transient['message_type'] =='success' )
+                {
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$user_deleted_transient['message']}</p></div>");
+                }
+                
+            } 
+        }
+        
+    ?>  
         <h3>Student List:</h3>    
         <p>            
             This is a list of all the students who have been created and added to this course. <br>

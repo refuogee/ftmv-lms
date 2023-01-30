@@ -418,21 +418,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 
-<div id="wrap">
-    <?php
-        $transient_delete_message = get_transient( 'user_deletion_transient' );              
-        if( ! empty( $transient_delete_message ) ) 
-        {   
-            if ($transient_delete_message['user_id'] == wp_get_current_user()->ID)
-            {                        
-                if ($transient_delete_message['message_type'] =='success' )
-                {
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_delete_message['message']}</p></div>");
-                }
-                
-            } 
-        }
-    ?>
+<div id="wrap">    
     <h2>Programme Details:</h2>    
     <p>
         On this page you can see the details for a specific programme as well as the courses that fall under this programme. <br> 
@@ -505,6 +491,37 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
     
     <hr>
 
+    <?php
+
+        $transient_delete_message = get_transient( 'user_deletion_transient' );              
+        if( ! empty( $transient_delete_message ) ) 
+        {   
+            if ($transient_delete_message['user_id'] == wp_get_current_user()->ID)
+            {                        
+                if ($transient_delete_message['message_type'] =='success' )
+                {
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_delete_message['message']}</p></div>");
+                }
+                
+            } 
+        }
+
+        $transient_message = get_transient( 'user_creation_form_transient' );              
+        if( ! empty( $transient_message ) ) 
+        {   
+            if ($transient_message['user_id'] == wp_get_current_user()->ID)
+            {   
+                if ($transient_message['user_type'] == 'facilitator' )
+                {
+                    if ($transient_message['message_type'] =='success' )
+                    {
+                        echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
+                    }
+                }
+            } 
+        }
+    ?>
+
     <div class="programme-facilitators-table">        
         <h3>Facilitators List:</h3>    
         <p>            
@@ -527,14 +544,28 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
 
     <div class="programme-courses-table">
         <?php
-            $transient_message = get_transient( 'course_creation_form_message_transient' );              
-            if( ! empty( $transient_message ) ) 
+
+            $course_created_transient = get_transient( 'course_creation_form_message_transient' );              
+            if( ! empty( $course_created_transient ) ) 
             {   
-                if ($transient_message['user_id'] == wp_get_current_user()->ID)
+                if ($course_created_transient['user_id'] == wp_get_current_user()->ID)
                 {                        
-                    echo ("<div class='notice notice-success is-dismissible'><p>{$transient_message['message']}</p></div>");
+                    echo ("<div class='notice notice-success is-dismissible'><p>{$course_created_transient['message']}</p></div>");
                 } 
                 
+            }
+
+            $course_deleted_transient = get_transient( 'course_deleted_transient' );              
+            if( ! empty( $course_deleted_transient ) ) 
+            {   
+                if ($course_deleted_transient['user_id'] == wp_get_current_user()->ID)
+                {                        
+                    if ($course_deleted_transient['message_type'] =='success' )
+                    {
+                        echo ("<div class='notice notice-success is-dismissible'><p>{$course_deleted_transient['message']}</p></div>");
+                    }
+                    
+                } 
             }
         ?>
         <h3>Course List:</h3>    

@@ -215,7 +215,8 @@ class ftmv_lms_Admin {
             "{$this->plugin_name}-course-overview" => true,
             "{$this->plugin_name}-programme-overview" => true,
             "{$this->plugin_name}-add-programme" => true,
-            "{$this->plugin_name}-add-user" => true
+            "{$this->plugin_name}-add-user" => true,
+            "{$this->plugin_name}-edit-user" => true
         );
 
         // Select another submenu item to highlight (optional).

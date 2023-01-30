@@ -144,3 +144,6 @@ tfoot tr .manage-column {
     align-items: center;
 }
 
+.notice p {
+    text-transform: capitalize;
+}
