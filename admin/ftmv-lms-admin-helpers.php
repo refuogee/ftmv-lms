@@ -5,7 +5,7 @@
         set_transient( $transient_id, $transient_details, $validity_period );
     }
     
-    function create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email)
+    function create_wp_user($programme_id, $programme_name, $user_name, $user_surname, $user_type, $role_name, $user_email)
     {
         //  $password = wp_generate_password( 6, false );
         
@@ -13,18 +13,15 @@
            
         echo '<br>';
         
-        
+        // Create a new Wordpress User         
         $wp_user_id = wp_create_user( $user_email, $password, $user_email );
         
-        $current_user_id = wp_get_current_user()->ID;
-        
+        // Error handling and transient message creation        
         if ( is_wp_error( $wp_user_id ) ) 
         {
-            // error_log('ERROR: ' . $wp_user_id->get_error_message());
+            $current_user_id = wp_get_current_user()->ID;            
             $message_type = 'error';
             $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => $wp_user_id->get_error_message(), 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email);            
-            //set_transient( 'user_creation_form_transient', $user_creation_details, 60 );
-
             transientHandler('user_creation_form_transient', $user_creation_details, 60);
         } 
         else 
@@ -36,24 +33,50 @@
                   'first_name'  =>    $user_name,
                   'last_name'   =>    $user_surname
                 )
-              );      
-              $new_wp_user = new WP_User( $wp_user_id );
-              /* error_log('About to create new WP user');
-              error_log("Role name = {$role_name}"); */
+            );      
+            
+            $new_wp_user = new WP_User( $wp_user_id );
+            /* error_log('About to create new WP user');
+            error_log("Role name = {$role_name}"); */
 
-              $new_wp_user->set_role( $role_name );     
-              
-              if ($user_type == "facilitator") 
-              {
+
+
+            if ($user_type == "facilitator") 
+            {
+
+                $editor_role_set = get_role( 'editor' )->capabilities;
+                $program_name_sanitized = sanitize_title( $programme_name );
+                $role = "{$program_name_sanitized}-facilitator";
+                $display_name = "{$programme_name} Facilitator";
+
+                add_role( $role, $display_name, $editor_role_set );
+
                 $capability_name = 'manage-ftmv-lms';
-                $role_object = get_role( $role_name );
-                $role_object->add_cap( $capability_name );                  
-              } 
-              $message_type = 'success';
-              $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Created", 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email, 'user_type' => $user_type);              
-              transientHandler('user_creation_form_transient', $user_creation_details, 60);
-              
-              return $wp_user_id;
+                $role_object = get_role( $role );                
+                $role_object->add_cap( $capability_name );     
+
+                $new_wp_user->set_role( $role );     
+
+            } 
+
+            if ($user_type == "student") 
+            {
+                
+                $display_name = "{$programme_name} Student";
+                $program_name_sanitized = sanitize_title( $programme_name );
+                $role = "{$program_name_sanitized}-student";
+                $capabilities = array("view-{$program_name_sanitized}" => true);
+                add_role( $role, $display_name, $capabilities );
+                $new_wp_user->set_role( $role ); 
+            }  
+
+
+
+            $message_type = 'success';
+            $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Created", 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email, 'user_type' => $user_type);              
+            transientHandler('user_creation_form_transient', $user_creation_details, 60);
+
+            return $wp_user_id;
         }
     }
 
@@ -82,18 +105,23 @@
     {
         
         global $wpdb;
-        $roles_table = $wpdb->prefix.'ftmv_lms_roles_table';        
-        $role_query = "SELECT id, role_name FROM {$roles_table} WHERE main_programme_id = {$programme_id} AND role_type = '{$user_type}'";        
-                
-        $role_data = $wpdb->get_results( $role_query, ARRAY_A );        
+        $roles_table = $wpdb->prefix.'ftmv_lms_roles_table';                
+        $programme_table = $wpdb->prefix.'ftmv_lms_main_programme_table';        
 
+        $role_query = "SELECT id, role_name FROM {$roles_table} WHERE main_programme_id = {$programme_id} AND role_type = '{$user_type}'";        
+        $programme_name_query = "SELECT name FROM {$programme_table} WHERE id = {$programme_id}";        
+        
+        $programme_data = $wpdb->get_results( $programme_name_query, ARRAY_A );        
+        $programme_name = $programme_data[0]['name'];
+        
+        $role_data = $wpdb->get_results( $role_query, ARRAY_A );        
         $role_name = $role_data[0]['role_name'];
 
         // error_log("inside manage user creation and the role name here is: {$role_name}");
 
         $role_id = $role_data[0]['id'];
         
-        $wp_user_id = create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email);
+        $wp_user_id = create_wp_user($programme_id, $programme_name, $user_name, $user_surname, $user_type, $role_name, $user_email);
         add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id, $user_type);     
          
     }
