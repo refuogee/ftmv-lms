@@ -127,7 +127,7 @@ class ftmv_lms_Admin {
         add_menu_page(
             'FTMV LMS',
             __( 'FTMV LMS', "{$this->plugin_name}-overview" ),            
-            'manage_options',
+            'manage-ftmv-lms',
             "{$this->plugin_name}-overview",
             array( $this, 'display_admin_overview_screen'),
             'dashicons-forms',3
@@ -137,7 +137,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Overview', "{$this->plugin_name}-overview" ),
 			__( 'Overview', "{$this->plugin_name}-overview" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-overview",
 			array( $this, 'display_admin_overview_screen' )
 		);
@@ -146,7 +146,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Programmes', "{$this->plugin_name}-programmes" ),
 			__( 'Programmes', "{$this->plugin_name}-programmes" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-programmes",
 			array( $this, 'display_programmes' )
 		);
@@ -155,7 +155,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Add a Programme', "{$this->plugin_name}-add-programme" ),
 			__( 'Add a Programme', "{$this->plugin_name}-add-programme" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-add-programme",
 			array( $this, 'display_add_programme' )
 		);
@@ -164,7 +164,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Programme Details', "{$this->plugin_name}-programme-overview" ),
 			__( 'Programme Details', "{$this->plugin_name}-programme-overview" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-programme-overview",
 			array( $this, 'display_programme_overview' )
 		);
@@ -173,7 +173,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Course Details', "{$this->plugin_name}-course-overview" ),
 			__( 'Course Details', "{$this->plugin_name}-course-overview" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-course-overview",
 			array( $this, 'display_course_overview' )
 		);
@@ -182,7 +182,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Add a Course', "{$this->plugin_name}-add-course" ),
 			__( 'Add a Course', "{$this->plugin_name}-add-course" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-add-course",
 			array( $this, 'display_add_course' )
 		);
@@ -191,7 +191,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'Add User', "{$this->plugin_name}-add-user" ),
 			__( 'Add User', "{$this->plugin_name}-add-user" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-add-user",
 			array( $this, 'display_add_user' )
 		);
@@ -200,7 +200,7 @@ class ftmv_lms_Admin {
 			"{$this->plugin_name}-overview",
 			__( 'User Details', "{$this->plugin_name}-edit-user" ),
 			__( 'User Details', "{$this->plugin_name}-edit-user" ),
-			'manage_options',
+			'manage-ftmv-lms',
 			"{$this->plugin_name}-edit-user",
 			array( $this, 'display_edit_user' )
 		);
@@ -358,13 +358,12 @@ class ftmv_lms_Admin {
 
 
     public function add_user () {
-        
-        $created_user_id = wp_get_current_user()->ID;
 
         if(isset($_POST['ftmv_add_user_nonce'])) {
             
             if(wp_verify_nonce($_POST['ftmv_add_user_nonce'], 'ftmv_add_user_nonce')) {
 
+                $created_user_id = get_current_user_id();
                 $course_id = sanitize_text_field( $_POST['course-id'] );
                 $programme_id = sanitize_text_field( $_POST['programme-id'] );
                 $user_type = sanitize_text_field( $_POST['user-type'] );

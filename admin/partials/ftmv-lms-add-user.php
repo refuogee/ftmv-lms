@@ -14,9 +14,19 @@
 
  $ftmv_add_user_nonce = wp_create_nonce('ftmv_add_user_nonce');
 
-$programme_id = $_GET['programme-id'];
-$course_id = $_GET['course-id'];
-$user_type = $_GET['user-type'];
+
+if(isset($_GET['programme-id'])) {
+    $programme_id = $_GET['programme-id'];
+}
+
+if(isset($_GET['course-id'])) {
+    $course_id = $_GET['course-id'];
+}
+
+
+if(isset($_GET['user-type'])) {
+    $user_type = $_GET['user-type'];
+}
 
 $student = false;
 $facilitator = false;
@@ -31,9 +41,13 @@ else if ($user_type == 'student')
 }
 
 global $wpdb;
-$course_table_query = "SELECT course_info.name FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info WHERE course_info.id ={$course_id}";
-$course_result = $wpdb->get_results( $course_table_query, ARRAY_A );
-$course_name = $course_result[0]['name'];
+if(isset($course_id)) {
+    $course_table_query = "SELECT course_info.name FROM ".$wpdb->prefix."ftmv_lms_course_table AS course_info WHERE course_info.id ={$course_id}";
+    $course_result = $wpdb->get_results( $course_table_query, ARRAY_A );
+    $course_name = $course_result[0]['name'];
+}
+
+
 
 $programme_table_query = "SELECT programme_info.name FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info WHERE programme_info.id ={$programme_id}";
 $programme_result = $wpdb->get_results( $programme_table_query, ARRAY_A );
@@ -165,7 +179,7 @@ $current_page = admin_url(sprintf('admin.php?%s', http_build_query($_GET)));
             ?>
                     <div class="ftmv-lms-form-button-container">
                         <button type="submit" class="button button-primary">Create New Facilitator</button>            
-                        <a href="<?php echo admin_url('admin.php?page=ftmv-lms-course-overview&course-id='. esc_attr($course_id) .'&programme-id='. esc_attr($programme_id)); ?>"><button type="button" class="button button-primary">Cancel</button></a>
+                        <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programme-overview&id='. esc_attr($programme_id)); ?>"><button type="button" class="button button-primary">Cancel</button></a>
                     </div>
             <?php } ?>
         </div>

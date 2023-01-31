@@ -41,7 +41,14 @@
               /* error_log('About to create new WP user');
               error_log("Role name = {$role_name}"); */
 
-              $new_wp_user->set_role( $role_name );      
+              $new_wp_user->set_role( $role_name );     
+              
+              if ($user_type == "facilitator") 
+              {
+                $capability_name = 'manage-ftmv-lms';
+                $role_object = get_role( $role_name );
+                $role_object->add_cap( $capability_name );                  
+              } 
               $message_type = 'success';
               $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Created", 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email, 'user_type' => $user_type);              
               transientHandler('user_creation_form_transient', $user_creation_details, 60);

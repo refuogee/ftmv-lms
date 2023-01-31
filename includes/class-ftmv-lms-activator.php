@@ -96,6 +96,9 @@ class ftmv_lms_Activator {
         dbDelta( $user_table_sql );
         dbDelta( $roles_table_sql );
         
+        $roleToAddManagementCapabilities = get_role( 'administrator' );
+        $roleToAddManagementCapabilities->add_cap( 'manage-ftmv-lms' );
+        
 	}
 
 }
