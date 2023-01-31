@@ -5,7 +5,7 @@
         set_transient( $transient_id, $transient_details, $validity_period );
     }
     
-    function create_wp_user($programme_id, $programme_name, $user_name, $user_surname, $user_type, $role_name, $user_email)
+    function create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email)
     {
         //  $password = wp_generate_password( 6, false );
         
@@ -36,38 +36,15 @@
             );      
             
             $new_wp_user = new WP_User( $wp_user_id );
-            /* error_log('About to create new WP user');
-            error_log("Role name = {$role_name}"); */
-
-
 
             if ($user_type == "facilitator") 
             {
-
-                $editor_role_set = get_role( 'editor' )->capabilities;
-                $program_name_sanitized = sanitize_title( $programme_name );
-                $role = "{$program_name_sanitized}-facilitator";
-                $display_name = "{$programme_name} Facilitator";
-
-                add_role( $role, $display_name, $editor_role_set );
-
-                $capability_name = 'manage-ftmv-lms';
-                $role_object = get_role( $role );                
-                $role_object->add_cap( $capability_name );     
-
-                $new_wp_user->set_role( $role );     
-
+                $new_wp_user->set_role( $role_name );     
             } 
 
             if ($user_type == "student") 
             {
-                
-                $display_name = "{$programme_name} Student";
-                $program_name_sanitized = sanitize_title( $programme_name );
-                $role = "{$program_name_sanitized}-student";
-                $capabilities = array("view-{$program_name_sanitized}" => true);
-                add_role( $role, $display_name, $capabilities );
-                $new_wp_user->set_role( $role ); 
+                $new_wp_user->set_role( $role_name );     
             }  
 
 
@@ -109,19 +86,11 @@
         $programme_table = $wpdb->prefix.'ftmv_lms_main_programme_table';        
 
         $role_query = "SELECT id, role_name FROM {$roles_table} WHERE main_programme_id = {$programme_id} AND role_type = '{$user_type}'";        
-        $programme_name_query = "SELECT name FROM {$programme_table} WHERE id = {$programme_id}";        
-        
-        $programme_data = $wpdb->get_results( $programme_name_query, ARRAY_A );        
-        $programme_name = $programme_data[0]['name'];
-        
         $role_data = $wpdb->get_results( $role_query, ARRAY_A );        
         $role_name = $role_data[0]['role_name'];
-
-        // error_log("inside manage user creation and the role name here is: {$role_name}");
-
         $role_id = $role_data[0]['id'];
         
-        $wp_user_id = create_wp_user($programme_id, $programme_name, $user_name, $user_surname, $user_type, $role_name, $user_email);
+        $wp_user_id = create_wp_user($programme_id, $user_name, $user_surname, $user_type, $role_name, $user_email);
         add_user_to_database($wp_user_id, $created_user_id, $programme_id, $course_id, $role_id, $user_type);     
          
     }
@@ -193,21 +162,17 @@
 
     // As the name says this helper function creates a role and adds it to the role table
 
-    function add_role_to_role_table($programme_id, $role_slug, $role_type, $role_display_name, $role_capability)    
+    function add_role_to_role_table($role, $programme_id, $role_type, $display_name)    
     {
         global $wpdb;
 
         $table = $wpdb->prefix.'ftmv_lms_roles_table';
         
-        $data = array('main_programme_id' => $programme_id, 'role_name' => $role_slug, 'role_type' => $role_type, 'role_display_name' => $role_display_name, 'role_capabilities' => $role_capability);
+        $data = array('role_name' => $role, 'main_programme_id' => $programme_id, 'role_type' => $role_type, 'role_display_name' => $display_name);
         
-        $format = array('%s', '%s', '%s', '%s', '%s');
+        $format = array('%s', '%d', '%s', '%s');
         
-        $wpdb->insert($table,$data,$format);
-        $programme_id = $wpdb->insert_id;
-
-        $capabilities = array($role_capability => true);        
-        wp_roles()->add_role( $role_slug, $role_display_name, $capabilities );
+        $wpdb->insert($table, $data, $format);
     }
 
 
@@ -242,7 +207,7 @@
         }
         else
         {
-            error_log('something went wrong');
+            error_log('removal of roles failed');
         }
     }
 
@@ -311,43 +276,41 @@
 
     // Course deletion end
 
+    function manage_role_creation($programme_id, $new_top_level_programme)
+    {
+        create_programme_student_role($programme_id, $new_top_level_programme);               
+        create_programme_facilitator_role($programme_id, $new_top_level_programme);               
+    }
 
-    function create_programme_student_role($plugin_name, $programme_id, $new_top_level_programme) 
+    function create_programme_student_role($programme_id, $new_top_level_programme) 
     {   
-        
-        $role_slug = 'programme-id-[' . $programme_id . ']-student';
-        $role_capability = 'can-view-programme-id-[' . $programme_id . ']';
-        $role_display_name = $new_top_level_programme . ' Student';
-
-        $returned_role_object = add_role(
-            $role_slug,
-            __( $role_display_name  ),
-            array(
-                $role_capability  => true
-            )
-        );
-        $role_type = 'student';        
-        add_role_to_role_table($programme_id, $role_slug, $role_type, $role_display_name, $role_capability);
+        $display_name = "{$new_top_level_programme} Student";
+        $program_name_sanitized = sanitize_title( $new_top_level_programme );
+        $role = "{$program_name_sanitized}-student";
+        $capabilities = array("view-{$program_name_sanitized}" => true);
+        add_role( $role, $display_name, $capabilities );
+        $role_type = 'student';
+        add_role_to_role_table($role, $programme_id, $role_type, $display_name);
 
         // error_log( print_r($returned_role_object, true) );
     }
 
-    function create_programme_facilitator_role($plugin_name, $programme_id, $new_top_level_programme) 
+    function create_programme_facilitator_role($programme_id, $new_top_level_programme) 
     {
-        $role_slug = 'programme-id-[' . $programme_id . ']-facilitator';        
-        $role_capability = 'can-facilitate-programme-id-[' . $programme_id . ']';
-        $role_display_name = $new_top_level_programme . ' Facilitator';
 
-        $returned_role_object = add_role(
-            $role_slug,
-            __( $role_display_name  ),
-            array(                
-                $role_capability  => true
-            )
-        );
-        
-        $role_type = 'facilitator';        
-        add_role_to_role_table($programme_id, $role_slug, $role_type, $role_display_name, $role_capability);
+        $editor_role_set = get_role( 'editor' )->capabilities;
+        $program_name_sanitized = sanitize_title( $new_top_level_programme );
+        $role = "{$program_name_sanitized}-facilitator";
+        $display_name = "{$new_top_level_programme} Facilitator";
+
+        add_role( $role, $display_name, $editor_role_set );
+
+        $capability_name = 'manage-ftmv-lms';
+        $role_object = get_role( $role );                
+        $role_object->add_cap( $capability_name );     
+            
+        $role_type = 'facilitator';
+        add_role_to_role_table($role, $programme_id, $role_type, $display_name);
         // error_log( print_r($returned_role_object, true) );
     } 
 

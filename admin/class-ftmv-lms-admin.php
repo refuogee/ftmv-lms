@@ -457,8 +457,7 @@ class ftmv_lms_Admin {
                 
                 $programme_id = create_programme($user_id, $new_top_level_programme);               
 
-                create_programme_student_role($this->plugin_name, $programme_id, $new_top_level_programme);               
-                create_programme_facilitator_role($this->plugin_name, $programme_id, $new_top_level_programme);               
+                manage_role_creation($programme_id, $new_top_level_programme);
 
                 wp_redirect( admin_url("/admin.php?page=ftmv-lms-programmes") );
                  

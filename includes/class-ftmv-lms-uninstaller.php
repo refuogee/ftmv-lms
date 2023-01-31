@@ -45,6 +45,31 @@ class ftmv_lms_Uninstaller {
 	public static function uninstall() {      
 
 		global $wpdb;
+        global $wp_roles;
+         
+        $role_table = $wpdb->prefix."ftmv_lms_roles_table";
+
+        $get_role_query = "SELECT * FROM {$role_table}";
+        $get_programme_roles = $wpdb->get_results( $get_role_query, ARRAY_A );
+        
+        if (is_array($get_programme_roles) || is_object($get_programme_roles))
+        {   
+            foreach($get_programme_roles as $programme_role)
+            {   
+                if (wp_roles()->is_role( $programme_role['role_name'] ))
+                {
+                    $wp_roles->remove_role($programme_role['role_name']);
+                }
+                else 
+                {
+                    error_log('the programme role does not exist to be removed.');
+                }         
+            } 
+        }
+        else
+        {
+            error_log('removal of roles failed');
+        }
 
         $main_programme_table_name = $wpdb->prefix . 'ftmv_lms_main_programme_table';
         $course_table_name = $wpdb->prefix . 'ftmv_lms_course_table';

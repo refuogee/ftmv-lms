@@ -84,8 +84,7 @@ class ftmv_lms_Activator {
             main_programme_id mediumint(9) NOT NULL,            
             role_name varchar(191) NOT NULL,            
             role_type varchar(191) NOT NULL,            
-            role_display_name varchar(191) NOT NULL,            
-            role_capabilities longtext NOT NULL,            
+            role_display_name varchar(191) NOT NULL,                        
             PRIMARY KEY  (id)
             ) $charset_collate;";
         
