@@ -19,6 +19,24 @@ $ftmv_delete_programme_nonce = wp_create_nonce('ftmv_delete_programme_nonce');
 
 global $wpdb;
 
+$current_user_id = wp_get_current_user()->ID;
+$admin_type_query = "SELECT roles_table.role_type FROM wp_ftmv_lms_roles_table as roles_table LEFT JOIN wp_ftmv_lms_user_table AS lms_user_table ON roles_table.id = lms_user_table.assigned_role_id WHERE lms_user_table.wp_user_id = {$current_user_id};";
+
+$admin_type_array = $wpdb->get_results( $admin_type_query, ARRAY_A );
+$admin_type = $admin_type_array[0]['role_type'];
+
+$admin = false;
+$facilitator = false;
+
+if ($admin_type == 'facilitator')
+{
+    $facilitator = true;
+}
+else 
+{
+    $admin = true;
+}
+
 // error_log(gettype($arg));
 
 $programme_data_query = "SELECT programme_info.id AS id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID WHERE programme_info.id =".$programme_id."";
@@ -427,7 +445,7 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
     <hr>
     <h3>Programme Details:</h3>    
         <p>            
-            You can edit the programme name here or delete the programme entirely.<br>
+            Admins can edit the programme name here or delete the programme entirely.<br>
     </p>   
     
     <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $program_data[0]['id'] .'' ) ); ?>" method="post" id="ftmv_edit_programme" class="ftmv-lms-details-form">        
@@ -465,31 +483,42 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
             </div>
         </div>
 
-        <div class="ftmv-lms-form-button-container">            
-            <div class="ftmv-lms-form-save-button-container">
-                <button name="action-type" value="edit" type="submit" class="button button-primary">Save Changes</button>            
+        <?php 
+            if ($admin)
+            {
+        ?>
+            <div class="ftmv-lms-form-button-container">            
+                <div class="ftmv-lms-form-save-button-container">
+                    <button name="action-type" value="edit" type="submit" class="button button-primary">Save Changes</button>            
+                </div>
+            </div>  
+        <?php 
+            }
+        ?>
+    </form>
+
+    <?php 
+        if ($admin)
+        {
+    ?>
+        <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $program_data[0]['id'] .'' ) ); ?>" method="post" id="ftmv_delete_programme" class="ftmv-lms-delete-programme-form">        
+            <input type="hidden" name="action" value="ftmv_delete_programme">  
+            <input type="hidden" name="ftmv_delete_programme_nonce" value="<?php echo $ftmv_delete_programme_nonce ?>" />			    			  
+            
+            <!-- ftmv-lms-form-layout-container -->
+            <div class="ftmv-lms-form-delete-button-container">
+                <button name="action-type" value="delete" type="submit" class="button button-primary delete-btn">Delete Programme</button>                        
             </div>
-        </div>  
-
-    </form>
-
-    <form action="<?php echo esc_url( admin_url( 'admin-post.php?programme-id='. $program_data[0]['id'] .'' ) ); ?>" method="post" id="ftmv_delete_programme" class="ftmv-lms-delete-programme-form">        
-        <input type="hidden" name="action" value="ftmv_delete_programme">  
-		<input type="hidden" name="ftmv_delete_programme_nonce" value="<?php echo $ftmv_delete_programme_nonce ?>" />			    			  
-        
-        <!-- ftmv-lms-form-layout-container -->
-        <div class="ftmv-lms-form-delete-button-container">
-            <button name="action-type" value="delete" type="submit" class="button button-primary delete-btn">Delete Programme</button>                        
-        </div>
-    </form>
+        </form>
+    <?php 
+        }
+    ?>
     
     <hr>
     
     <div class="ftmv-lms-back-button-container">            
         <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-programmes')) ?>"> <button type="button" class="button button-primary">Back to Programmes</button></a>
     </div>
-    
-    <hr>
 
     <?php
 
@@ -522,21 +551,30 @@ if( is_admin() && !class_exists( 'WP_List_Table' ) )
         }
     ?>
 
-    <div class="programme-facilitators-table">        
-        <h3>Facilitators List:</h3>    
-        <p>            
-            This is a list of all the facilitators assigned to manage this programme.<br>            
-        </p>
-        <?php
-            $facilitator_table = new Facilitator_List_Table();
-            $facilitator_table->prepare_items();
-            $facilitator_table->display();            
-        ?>
-        
+    <?php 
+        if ($admin)
+        {
+    ?>
+        <hr>
+        <div class="programme-facilitators-table">        
+            <h3>Facilitators List:</h3>    
+            <p>            
+                This is a list of all the facilitators assigned to manage this programme.<br>            
+            </p>
+            <?php
+                $facilitator_table = new Facilitator_List_Table();
+                $facilitator_table->prepare_items();
+                $facilitator_table->display();            
+            ?>
+            
 
-        <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-user&programme-id='. esc_attr($programme_id) . '&user-type='. esc_attr($user_type))) ?>"> <button type="button" class="button button-primary">Add New Facilitator</button></a>
+            <a href="<?php echo esc_url(admin_url('admin.php?page=ftmv-lms-add-user&programme-id='. esc_attr($programme_id) . '&user-type='. esc_attr($user_type))) ?>"> <button type="button" class="button button-primary">Add New Facilitator</button></a>
 
-    </div>
+        </div>
+
+    <?php 
+        }
+    ?>
     
     
 
