@@ -54,4 +54,19 @@
         });
     }
 
+    /* 
+        Page / post admin panel functionality
+    */
+        let adminPanelSelectContainer = document.querySelector('.ftmv-lms-admin-panel-select-container');
+
+        /*  
+        ftmv-lms-admin-panel-select-container-height */
+
+        let adminPanelConfirm = document.querySelector('#ftmv-lms-admin-panel-confirm');
+        adminPanelConfirm.addEventListener('change', function(){
+            console.log('changing');
+            adminPanelSelectContainer.classList.toggle('ftmv-lms-admin-panel-select-container-height');
+        })
+
+
 })();

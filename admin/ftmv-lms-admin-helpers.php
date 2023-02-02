@@ -38,7 +38,7 @@
             $new_wp_user = new WP_User( $wp_user_id );
 
             if ($user_type == "facilitator") 
-            {
+            {   
                 $new_wp_user->set_role( $role_name );     
             } 
 
@@ -46,8 +46,6 @@
             {
                 $new_wp_user->set_role( $role_name );     
             }  
-
-
 
             $message_type = 'success';
             $user_creation_details = array('user_id' => $current_user_id, 'message_type' => $message_type, 'message' => "{$user_type} Successfully Created", 'user_name' => $user_name, 'user_surname' => $user_surname, 'user_email' => $user_email, 'user_type' => $user_type);              

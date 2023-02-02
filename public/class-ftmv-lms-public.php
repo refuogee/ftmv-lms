@@ -3,11 +3,11 @@
 /**
  * The public-facing functionality of the plugin.
  *
- * @link       https://www.toptal.com/resume/ratko-solaja
+ * @link       ftmv
  * @since      1.0.0
  *
- * @package    Toptal_Save
- * @subpackage Toptal_Save/public
+ * @package    Ftmv_Lms
+ * @subpackage Ftmv_Lms/public
  */
 
 /**
@@ -16,9 +16,9 @@
  * Defines the plugin name, version, and two examples hooks for how to
  * enqueue the admin-specific stylesheet and JavaScript.
  *
- * @package    Toptal_Save
- * @subpackage Toptal_Save/public
- * @author     Ratko Solaja <ratko@toptal.com>
+ * @package    Ftmv_Lms
+ * @subpackage Ftmv_Lms/public
+ * @author     Simon Vorwerk <simonthevorwerk@gmail.com>
  */
 class Ftmv_Lms_Public {
 
@@ -65,10 +65,10 @@ class Ftmv_Lms_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Toptal_Save_Loader as all of the hooks are defined
+		 * defined in Ftmv_Lms_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Toptal_Save_Loader will then create the relationship
+		 * The Ftmv_Lms_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
@@ -92,10 +92,10 @@ class Ftmv_Lms_Public {
 		 * This function is provided for demonstration purposes only.
 		 *
 		 * An instance of this class should be passed to the run() function
-		 * defined in Toptal_Save_Loader as all of the hooks are defined
+		 * defined in Ftmv_Lms_Loader as all of the hooks are defined
 		 * in that particular class.
 		 *
-		 * The Toptal_Save_Loader will then create the relationship
+		 * The Ftmv_Lms_Loader will then create the relationship
 		 * between the defined hooks and the functions defined in this
 		 * class.
 		 */
@@ -149,12 +149,14 @@ class Ftmv_Lms_Public {
 
     }
 
-	public function append_the_button( $content ) {
+	public function check_restricted( $content ) {
 
         $user_ID = get_current_user_id(); 
 
         $user_info = get_userdata($user_ID);
 
+        $current_post_id = get_the_ID();
+        $restricted_meta_key = 'ftmv_lms_restricted';
         
         if ($user_ID == 0) {
             // The user ID is 0, therefore the current user is not logged in
@@ -162,6 +164,8 @@ class Ftmv_Lms_Public {
         }
 
         // error_log(print_r($this->km_get_user_capabilities($user_ID), true));
+
+        
 
         if ( is_page( 'user-capabilites-page' ) ) {
             $custom_content = '';
@@ -176,11 +180,57 @@ class Ftmv_Lms_Public {
 			ob_end_clean();
 			$content = $content . $custom_content;
             return $content;
-        }   
-        else 
+        }           
+        else if ( get_post_meta($current_post_id, $restricted_meta_key, true) == 1)
+        {
+            global $wpdb;
+
+            $programme_id_meta_key = 'ftmv_lms_programme_id';
+
+            $programme_id = get_post_meta($current_post_id, $programme_id_meta_key, true);
+
+            $programme_table = "wp_ftmv_lms_main_programme_table";
+            $programme_table_query = "SELECT name FROM {$programme_table} WHERE id = {$programme_id}";        
+            $programme_result_array = $wpdb->get_results( $programme_table_query, ARRAY_A );        
+            $programme_name = sanitize_title_with_dashes($programme_result_array[0]['name']);
+
+            $capabilitiy_string = "view-{$programme_name}";
+
+            if ( current_user_can( $capabilitiy_string ) || current_user_can( 'manage-ftmv-lms' ) )
+            {
+                $custom_content = "You can view this restricted Content Capability string = : {$capabilitiy_string}";
+                $custom_content .= $content;            
+                return $custom_content;    
+            }
+            else 
+            {
+                $custom_content = "Restricted Content Not Allowed to view";
+                $custom_content .= $content;            
+                return $custom_content;          
+            }
+        }
+        else
         {
             return $content;
-        }
-	}
+        } 
 
+        /* if ( is_page( 'user-capabilites-page' ) ) {
+            $custom_content = '';
+			ob_start();
+			
+            echo 'Username: ' . $user_info->user_login . "\n";
+            echo 'User roles: ' . implode(', ', $user_info->roles) . "\n";
+            echo '<pre>';
+            echo print_r($user_info->allcaps);
+            echo '</pre>';
+			$custom_content .= ob_get_contents();
+			ob_end_clean();
+			$content = $content . $custom_content;
+            return $content;
+        }           
+        else
+        {
+            return $content;
+        }  */
+	}
 }

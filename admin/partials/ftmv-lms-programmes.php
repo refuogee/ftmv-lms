@@ -12,23 +12,18 @@
      * @subpackage ftmv_lms/admin/partials
      */
 
-    global $wpdb;
-    $current_user_id = wp_get_current_user()->ID;
-    $admin_type_query = "SELECT roles_table.role_type FROM wp_ftmv_lms_roles_table as roles_table LEFT JOIN wp_ftmv_lms_user_table AS lms_user_table ON roles_table.id = lms_user_table.assigned_role_id WHERE lms_user_table.wp_user_id = {$current_user_id};";
-    $admin_type_array = $wpdb->get_results( $admin_type_query, ARRAY_A );
-    $admin_type = $admin_type_array[0]['role_type'];
-
     $admin = false;
     $facilitator = false;
 
-    if ($admin_type == 'facilitator')
+    if ( current_user_can( 'manage_options' ) )
     {
-        $facilitator = true;
+
+        $admin = true;
     }
     else 
     {
-        $admin = true;
-    }
+        $facilitator = true;
+    }    
 
     if( is_admin() && !class_exists( 'WP_List_Table' ) )
         require_once( ABSPATH . 'wp-admin\includes\list-table.php');

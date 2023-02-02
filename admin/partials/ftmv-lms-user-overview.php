@@ -86,7 +86,7 @@
     
     <form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" id="ftmv_edit_user" class="ftmv-lms-details-form">        
         <input type="hidden" name="action" value="ftmv_edit_user">  
-		<input type="hidden" name="ftmv_edit_user_nonce" value="<?php echo $ftmv_edit_user_nonce ?>" />			    			  
+		    <input type="hidden" name="ftmv_edit_user_nonce" value="<?php echo $ftmv_edit_user_nonce ?>" />			    			  
         
         <input type="hidden" id="user-id" name="uid" value="<?php echo esc_attr($uid); ?>">
         

@@ -9,7 +9,7 @@
  * @link       ftmv
  * @since      1.0.0
  *
- * @package    ftmv_lms
+ * @package    Ftmv_Lms
  * @subpackage ftmv_lms/includes
  */
 
@@ -187,6 +187,11 @@ class ftmv_lms {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+        
+        /* $this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'hcf_register_meta_boxes' ); */
+        $this->loader->add_action( 'load-post.php', $plugin_admin, 'ftmv_lms_metaboxes_setup' );
+        $this->loader->add_action( 'load-post-new.php', $plugin_admin, 'ftmv_lms_metaboxes_setup' );
         
 	}
 
@@ -201,8 +206,8 @@ class ftmv_lms {
 
 		$plugin_public = new Ftmv_Lms_Public( $this->get_plugin_name(), $this->get_version() );
 
-		// Append our button
-		$this->loader->add_action( 'the_content', $plugin_public, 'append_the_button', 45 );
+		// Check if content needs to be restricted
+		$this->loader->add_action( 'the_content', $plugin_public, 'check_restricted', 45 );
 
 		/* // Add our Shortcodes
 		$this->loader->add_shortcode( 'toptal-save', $plugin_public, 'register_save_unsave_shortcode' );

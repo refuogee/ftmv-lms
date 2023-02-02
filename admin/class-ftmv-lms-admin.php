@@ -683,4 +683,156 @@ class ftmv_lms_Admin {
         }
     }
 
+
+    /* Meta Box Functions */
+
+    public function ftmv_lms_metaboxes_setup() {
+
+        /* Add meta boxes on the 'add_meta_boxes' hook. */
+        add_action( 'add_meta_boxes', array($this,'ftmv_lms_add_post_meta_boxes'));
+        add_action( 'save_post', array($this,'ftmv_lms_save_post_meta_boxes'), 10, 2);
+      }
+
+      function ftmv_lms_add_post_meta_boxes() {
+        $types = array('page', 'post');
+        add_meta_box(
+          'ftmv-lms-admin-panel',      // Unique ID
+          esc_html__( 'FTMV LMS Admin Panel', 'example' ),    // Title
+          array($this,'ftmv_lms_admin_panel_meta_box'),   // Callback function
+          $types,         // Admin page (or post type)
+          'side',         // Context
+          'default'         // Priority
+        );
+      }
+
+      function ftmv_lms_admin_panel_meta_box( $post ) { ?>
+
+        <?php wp_nonce_field( basename( __FILE__ ), 'ftmv_lms_admin_panel_class_nonce' ); 
+
+            global $wpdb;
+            $programmes_table = 'wp_ftmv_lms_main_programme_table';
+            $programmes_query = "SELECT id, name FROM {$programmes_table}";        
+
+            $programmes_results_array = $wpdb->get_results( $programmes_query, ARRAY_A );   
+            
+            // echo esc_attr( get_post_meta( $post->ID, 'ftmv_lms_restricted', true ) ); 
+            $post_restricted = 0;
+            $post_restricted = (int) esc_attr( get_post_meta( $post->ID, 'ftmv_lms_restricted', true ));
+
+            $programme_id = 0;
+            $programme_id = (int) esc_attr( get_post_meta( $post->ID, 'ftmv_lms_programme_id', true ));
+            
+        ?>
+
+        
+      
+        <div class="ftmv-lms-admin-panel-container">
+            <div class="ftmv-lms-admin-panel-checkbox-container">
+                <input class="widefat" type="checkbox" name="ftmv-lms-admin-panel-confirm" id="ftmv-lms-admin-panel-confirm" value="restrict" <?php if($post_restricted) echo 'checked' ?> />
+                <label for="ftmv-lms-admin-panel-confirm">Restrict this content?</label>
+            </div>    
+
+            <div class="ftmv-lms-admin-panel-select-container <?php if($post_restricted) echo 'ftmv-lms-admin-panel-select-container-height' ?>">
+                <label for="ftmv-lms-admin-panel-select-programmes"></label>
+                    <select name="ftmv-lms-admin-panel-select-programmes" id="ftmv-lms-admin-panel-select-programmes">
+
+                        <option value='0'>Choose Programme</option>        
+                        <?php
+                            for ($i = 0; $i < count($programmes_results_array); $i++)
+                            {
+                                ?>
+                                    <option value="<?php echo esc_html( $programmes_results_array[$i]['id'] ) ?>" <?php if( (int) esc_html( $programmes_results_array[$i]['id'] ) == $programme_id ) echo 'selected' ?>><?php echo esc_html( $programmes_results_array[$i]['name'] ) ?></option>                    
+                                <?php
+                            }
+                        ?>
+
+                    </select>                
+            </div>
+        </div>
+      <?php }
+
+    function ftmv_lms_save_post_meta_boxes($post_id, $post) 
+    {
+        if ( !isset( $_POST['ftmv_lms_admin_panel_class_nonce'] ) || !wp_verify_nonce( $_POST['ftmv_lms_admin_panel_class_nonce'], basename( __FILE__ ) ) )
+            return $post_id;
+
+        $post_type = get_post_type_object( $post->post_type );
+        if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
+            return $post_id;
+
+        $restricted = 'false';
+
+        if(isset($_POST['ftmv-lms-admin-panel-confirm']))
+        {
+            if ( sanitize_text_field( $_POST['ftmv-lms-admin-panel-confirm']) === 'restrict')
+            {
+                $restricted = 'true';
+
+                if ($restricted === 'true')
+                {
+                    if(isset($_POST['ftmv-lms-admin-panel-select-programmes']))
+                    {
+
+                        $programme_id = ( sanitize_text_field( $_POST['ftmv-lms-admin-panel-select-programmes'] ) );
+
+                        if ($programme_id != 0 )
+                        {
+
+                            $restricted_meta_key = 'ftmv_lms_restricted';
+                            $new_restricted_meta_value = 1;
+
+                            $restricted_meta_value = get_post_meta( $post_id, $restricted_meta_key, true );
+
+                            if ( $new_restricted_meta_value && "" == $restricted_meta_value )
+                                add_post_meta( $post_id, $restricted_meta_key, $new_restricted_meta_value, true );
+                            
+                            elseif ( $new_restricted_meta_value && $new_restricted_meta_value != $restricted_meta_value )
+                                update_post_meta( $post_id, $restricted_meta_key, $new_restricted_meta_value );
+                            
+                            elseif ( "" == $new_restricted_meta_value && $restricted_meta_value )
+                                delete_post_meta( $post_id, $restricted_meta_key, $restricted_meta_value );
+
+                            // programme_id_meta_key is the id of the programme that the content belongs to
+                        
+                            $programme_id_meta_key = 'ftmv_lms_programme_id';
+                            $new_programme_id_meta_value = $programme_id;
+
+                            $programme_id_meta_value = get_post_meta( $post_id, $programme_id_meta_key, true );
+
+                            if ( $new_programme_id_meta_value && "" == $programme_id_meta_value )
+                                add_post_meta( $post_id, $programme_id_meta_key, $new_programme_id_meta_value, true );
+                            
+                            elseif ( $new_programme_id_meta_value && $new_programme_id_meta_value != $programme_id_meta_value )
+                                update_post_meta( $post_id, $programme_id_meta_key, $new_programme_id_meta_value );
+                            
+                            elseif ( "" == $new_programme_id_meta_value && $programme_id_meta_value )
+                                delete_post_meta( $post_id, $programme_id_meta_key, $programme_id_meta_value );
+                        }
+                    }
+                }
+            }
+        }        
+        
+        
+        if ($restricted === 'false')
+        {
+            /* $myfile = fopen("../wp-content/plugins/mylog.txt", "w") or die("Unable to open file!");
+            $txt = "The post is NOT restricted therefore if there is meta data we should delete it";
+                
+            fwrite($myfile, $txt);            
+            fclose($myfile);  */
+
+            $restricted_meta_key = 'ftmv_lms_restricted';
+            // $new_restricted_meta_value = 0;
+
+            $restricted_meta_value = get_post_meta( $post_id, $restricted_meta_key, true );
+
+            delete_post_meta( $post_id, $restricted_meta_key, $restricted_meta_value );
+
+            $programme_id_meta_key = 'ftmv_lms_programme_id';
+            $programme_id_meta_value = get_post_meta( $post_id, $programme_id_meta_key, true );
+            delete_post_meta( $post_id, $programme_id_meta_key, $programme_id_meta_value );
+
+        }
+    }
 }
