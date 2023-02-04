@@ -92,6 +92,7 @@ class ftmv_lms_Uninstaller {
 
       $roleToAddManagementCapabilities = get_role( 'administrator' );
       $roleToAddManagementCapabilities->remove_cap( 'manage-ftmv-lms' );
+      remove_role( 'ftmv-lms-manager' );
 
 	}
 
