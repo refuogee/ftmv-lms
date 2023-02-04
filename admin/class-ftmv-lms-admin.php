@@ -122,7 +122,7 @@ class ftmv_lms_Admin {
 	 * @since    1.0.0
 	 */
 
-    public function register_settings_page() {
+    public function register_settings_page() {       
 
         add_menu_page(
             'FTMV LMS',
@@ -683,6 +683,41 @@ class ftmv_lms_Admin {
         }
     }
 
+    
+    public function ftmv_lms_login_redirect($redirect_to, $request, $user) 
+    {
+        if ( $user && is_object( $user ) && is_a( $user, 'WP_User' ) ) {
+            if ( $user->has_cap( 'manage-ftmv-lms' ) ) 
+            {
+                $redirect_to = admin_url('admin.php?page=ftmv-lms-overview');
+            } 
+            else if ( $user->has_cap( 'ftmv-lms-student' ) ) 
+            {
+                $redirect_to = home_url('/programmes');
+            }
+            /* else {
+                $url = home_url( '/members-only/' );
+            } */
+        }
+        return $redirect_to;
+
+        /* if ( current_user_can( 'manage_options' ) )
+        {
+            $url = get_admin_url() . 'admin.php?page=ftmv-lms-overview';
+
+            $myfile = fopen("mylog.txt", "w") or die("Unable to open file!");
+            $txt = $url;
+                
+            fwrite($myfile, $txt);            
+            fclose($myfile); 
+
+            wp_redirect($url);
+        } */
+       /*  else 
+        {
+            return $redirect_to;
+        } */
+    }
 
     /* Meta Box Functions */
 
@@ -816,12 +851,6 @@ class ftmv_lms_Admin {
         
         if ($restricted === 'false')
         {
-            /* $myfile = fopen("../wp-content/plugins/mylog.txt", "w") or die("Unable to open file!");
-            $txt = "The post is NOT restricted therefore if there is meta data we should delete it";
-                
-            fwrite($myfile, $txt);            
-            fclose($myfile);  */
-
             $restricted_meta_key = 'ftmv_lms_restricted';
             // $new_restricted_meta_value = 0;
 
