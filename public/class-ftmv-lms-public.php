@@ -167,7 +167,7 @@ class Ftmv_Lms_Public {
 
         
 
-        if ( is_page( 'user-capabilites-page' ) ) {
+        if ( is_page( 'user-capabilities-page' ) ) {
             $custom_content = '';
 			ob_start();
 			
@@ -194,43 +194,27 @@ class Ftmv_Lms_Public {
             $programme_result_array = $wpdb->get_results( $programme_table_query, ARRAY_A );        
             $programme_name = sanitize_title_with_dashes($programme_result_array[0]['name']);
 
-            $capabilitiy_string = "view-{$programme_name}";
+            $capability_string = "view-{$programme_name}";
 
-            if ( current_user_can( $capabilitiy_string ) || current_user_can( 'manage-ftmv-lms' ) )
+            if ( current_user_can( $capability_string ) || current_user_can( 'manage-ftmv-lms' ) )
             {
-                $custom_content = "You can view this restricted Content Capability string = : {$capabilitiy_string}";
+                $user_meta = get_userdata(get_current_user_id());
+                $user_roles = $user_meta->roles[0];
+
+                $custom_content = "User Role: {$user_roles}";               
+
                 $custom_content .= $content;            
                 return $custom_content;    
             }
             else 
             {
-                $custom_content = "Restricted Content Not Allowed to view";
-                $custom_content .= $content;            
+                $custom_content = "This Content Is Restricted.";                
                 return $custom_content;          
             }
         }
-        else
+        else 
         {
             return $content;
-        } 
-
-        /* if ( is_page( 'user-capabilites-page' ) ) {
-            $custom_content = '';
-			ob_start();
-			
-            echo 'Username: ' . $user_info->user_login . "\n";
-            echo 'User roles: ' . implode(', ', $user_info->roles) . "\n";
-            echo '<pre>';
-            echo print_r($user_info->allcaps);
-            echo '</pre>';
-			$custom_content .= ob_get_contents();
-			ob_end_clean();
-			$content = $content . $custom_content;
-            return $content;
-        }           
-        else
-        {
-            return $content;
-        }  */
+        }
 	}
 }
