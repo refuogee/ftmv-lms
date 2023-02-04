@@ -15,15 +15,18 @@
     $admin = false;
     $facilitator = false;
 
-    if ( current_user_can( 'manage_options' ) )
+    if ( current_user_can( 'manage-ftmv-lms' ) )
     {
-
-        $admin = true;
+        $roles = wp_get_current_user()->roles;        
+        if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_ options' )) )
+        {
+            $admin = true;
+        }
+        else 
+        {
+            $facilitator = true;
+        }
     }
-    else 
-    {
-        $facilitator = true;
-    }    
 
     if( is_admin() && !class_exists( 'WP_List_Table' ) )
         require_once( ABSPATH . 'wp-admin\includes\list-table.php');

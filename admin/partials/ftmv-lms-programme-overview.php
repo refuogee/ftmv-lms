@@ -23,28 +23,22 @@ $admin = false;
 $facilitator = false;
 
 
-if ( current_user_can( 'manage_options' ) )
+if ( current_user_can( 'manage-ftmv-lms' ) )
 {
-
-    $admin = true;
+    $roles = wp_get_current_user()->roles;        
+    if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_ options' )) )
+    {
+        $admin = true;
+    }
+    else 
+    {
+        $facilitator = true;
+    }
 }
-else 
-{
-    $facilitator = true;
-}
-
-// error_log(gettype($arg));
 
 $programme_data_query = "SELECT programme_info.id AS id, programme_info.timecreated, programme_info.name, user_info.display_name AS 'created_user' FROM ".$wpdb->prefix."ftmv_lms_main_programme_table AS programme_info LEFT JOIN ".$wpdb->prefix."users AS user_info ON programme_info.created_user_id = user_info.ID WHERE programme_info.id =".$programme_id."";
-
-// error_log($query);
-
 $program_data = $wpdb->get_results( $programme_data_query, ARRAY_A );
-
 $user_type = 'facilitator';
-
-// error_log( print_r($result, true) );
-
 
 if( is_admin() && !class_exists( 'WP_List_Table' ) )
         require_once( ABSPATH . 'wp-admin\includes\list-table.php');
