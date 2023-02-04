@@ -97,6 +97,18 @@ class ftmv_lms_Activator {
         
         $roleToAddManagementCapabilities = get_role( 'administrator' );
         $roleToAddManagementCapabilities->add_cap( 'manage-ftmv-lms' );
+
+        $editor_role_set = get_role( 'editor' )->capabilities;
+        $role = "ftmv-lms-manager";
+        $display_name = "LMS Plugin Manager";
+        add_role( $role, $display_name, $editor_role_set );
+
+        $capability_name = 'manage-ftmv-lms';
+        $role_object = get_role( $role );                
+        $role_object->add_cap( $capability_name );     
+            
+        $role_type = 'ftmv-lms-manager';
+        add_role_to_role_table($role, $programme_id, $role_type, $display_name);
         
 	}
 
