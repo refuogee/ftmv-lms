@@ -285,7 +285,7 @@
         $display_name = "{$new_top_level_programme} Student";
         $program_name_sanitized = sanitize_title( $new_top_level_programme );
         $role = "{$program_name_sanitized}-student";
-        $capabilities = array("view-{$program_name_sanitized}" => true);
+        $capabilities = array("view-{$program_name_sanitized}" => true, "ftmv-lms-student" => true);
         add_role( $role, $display_name, $capabilities );
         $role_type = 'student';
         add_role_to_role_table($role, $programme_id, $role_type, $display_name);
