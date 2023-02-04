@@ -192,7 +192,9 @@ class ftmv_lms {
         /* $this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'hcf_register_meta_boxes' ); */
         $this->loader->add_action( 'load-post.php', $plugin_admin, 'ftmv_lms_metaboxes_setup' );
         $this->loader->add_action( 'load-post-new.php', $plugin_admin, 'ftmv_lms_metaboxes_setup' );
-        
+
+        // Hook for login redirect.
+        $this->loader->add_filter( 'login_redirect', $plugin_admin, 'ftmv_lms_login_redirect', 10, 3);
 	}
 
 	/**
