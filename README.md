@@ -26,4 +26,3 @@ Unzip the file into your WordPress plugin folder and you can install it from Wor
 - Emailing newly created users has not been handled 
 - A choice needs to be made for what happens to user data on course / programme / plugin deletion and then implemented
 - Better structuring of code
--
