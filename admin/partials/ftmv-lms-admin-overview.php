@@ -23,13 +23,17 @@
     $admin = false;
     $facilitator = false;
 
-    if ($admin_type == 'facilitator')
+    if ( current_user_can( 'manage-ftmv-lms' ) )
     {
-        $facilitator = true;
-    }
-    else 
-    {
-        $admin = true;
+        $roles = wp_get_current_user()->roles;        
+        if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_options' )) )
+        {
+            $admin = true;
+        }
+        else 
+        {
+            $facilitator = true;
+        }
     }
 
 ?>
@@ -70,6 +74,6 @@
         }
     ?>
 	<div class="option-button-container">
-        <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programmes'); ?>"> <button type="button" class="button button-primary">Programmes</button></a>
+        <a href="<?php echo admin_url('admin.php?page=ftmv-lms-programmes'); ?>"> <button type="button" class="button iframe-step-one button-primary">Programmes</button></a>
     </div> 
 </div>

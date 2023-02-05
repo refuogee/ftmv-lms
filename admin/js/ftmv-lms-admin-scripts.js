@@ -57,16 +57,55 @@
     /* 
         Page / post admin panel functionality
     */
-        let adminPanelSelectContainer = document.querySelector('.ftmv-lms-admin-panel-select-container');
+        if (document.querySelector('.ftmv-lms-admin-panel-select-container'))    
+        {
+            let adminPanelSelectContainer = document.querySelector('.ftmv-lms-admin-panel-select-container');
 
-        /*  
-        ftmv-lms-admin-panel-select-container-height */
+            /*  
+            ftmv-lms-admin-panel-select-container-height */
 
-        let adminPanelConfirm = document.querySelector('#ftmv-lms-admin-panel-confirm');
-        adminPanelConfirm.addEventListener('change', function(){
-            console.log('changing');
-            adminPanelSelectContainer.classList.toggle('ftmv-lms-admin-panel-select-container-height');
+            let adminPanelConfirm = document.querySelector('#ftmv-lms-admin-panel-confirm');
+            adminPanelConfirm.addEventListener('change', function(){
+                console.log('changing');
+                adminPanelSelectContainer.classList.toggle('ftmv-lms-admin-panel-select-container-height');
+            })
+        }
+
+    /* 
+        Iframe Messaging Functionality
+    */
+
+    function sendMessageToIframe(section)
+    {
+        switch(section) {
+            case 1:                                
+                window.top.postMessage('first-message', '*');
+                break;            
+            case 2:                                
+                window.top.postMessage('second-message', '*');
+                console.log('second message sent');
+                break;            
+          }
+        
+    }
+
+    if (document.querySelector('.iframe-step-one'))    
+    {
+        let firstStepButton = document.querySelector('.iframe-step-one');
+        firstStepButton.addEventListener('click', () => {            
+            sendMessageToIframe(1);
         })
 
+    }
+
+    if (document.querySelector('.iframe-step-two'))    
+    {
+        let secondStepButton = document.querySelector('.iframe-step-two');
+        secondStepButton.addEventListener('click', () => {            
+            sendMessageToIframe(2);
+        })
+
+    }
+        
 
 })();

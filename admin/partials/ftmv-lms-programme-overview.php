@@ -26,7 +26,7 @@ $facilitator = false;
 if ( current_user_can( 'manage-ftmv-lms' ) )
 {
     $roles = wp_get_current_user()->roles;        
-    if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_ options' )) )
+    if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_options' )) )
     {
         $admin = true;
     }

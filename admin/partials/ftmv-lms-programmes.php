@@ -18,7 +18,7 @@
     if ( current_user_can( 'manage-ftmv-lms' ) )
     {
         $roles = wp_get_current_user()->roles;        
-        if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_ options' )) )
+        if ( ($roles[0] == 'ftmv-lms-manager') || (current_user_can( 'manage_options' )) )
         {
             $admin = true;
         }
@@ -249,7 +249,7 @@
                 if ($admin)
                 {
             ?>
-                <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-programme'); ?>"> <button type="button" class="button button-primary">Add New Programme</button></a>
+                <a href="<?php echo admin_url('admin.php?page=ftmv-lms-add-programme'); ?>"> <button type="button" class="button button-primary iframe-step-two">Add New Programme</button></a>
             <?php 
                 }
             ?>
