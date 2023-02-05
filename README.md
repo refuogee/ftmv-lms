@@ -1,8 +1,12 @@
-*FTMV LMS*
+# FTMV LMS
 
-Create courses and the facilitators and learners associated with these courses so they can interact with plugin functionality and course material based on their permissions and capabilities.
+## Description
+The acronym here reads learnER management system as opposed to learnING management system. 
+This plugin faciliates the creation of programmes, facilitators and students associated with said programmes and courses which are instances of programmes that run at designated intervals. The plugin also enables users to restrict pages or posts and assign them to programmes thus creating the content which students then have access to while not being able to view content that they are not assigned to.
 
-**Description**
+Initially created as a solution for a client's needs. I started by creating code in a child theme's function file. While this served the purpose I knew that this was not best practice and wanting to expand my WordPress knowledge as well as PHP knowledge I sought to turn the code into a plugin. 
+
+I followed along with [Ratko Solaja's](https://www.toptal.com/wordpress/ultimate-guide-building-wordpress-plugin) amazing walkthrought on building a plugin. Using his boilerplate code I built my plugin.
 
 Created for a client's specific needs but trying to generalise in the interests of possibly creating a useful plugin.
 
